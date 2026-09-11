@@ -1,0 +1,29 @@
+:root {
+  color-scheme: light;
+  background: #c7c7c9;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+}
+
+.hero {
+  min-height: 100svh;
+  background: url("assets/hero-hand-background-centered-1920x1080.png") center / cover no-repeat;
+}
+
+@media (max-width: 760px) {
+  .hero {
+    background-image: url("assets/hero-hand-background-1920x1080.png");
+    background-position: 58% center;
+  }
+}
