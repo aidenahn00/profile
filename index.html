@@ -21,8 +21,8 @@
           <span>Web Publisher</span>
           <span class="hero__name">Ahn Jeong Hyeon</span>
         </h1>
-        <svg class="hero__sound" viewBox="0 0 120 120" role="img" aria-labelledby="sound-title">
-          <title id="sound-title">Sound on — 원형 스피커 그래픽</title>
+        <button class="hero__sound" type="button" aria-label="재즈 음악 재생" aria-pressed="false">
+        <svg viewBox="0 0 120 120" aria-hidden="true">
           <defs>
             <path id="sound-ring" d="M14,60 a46,46 0 1,1 0,0.01" />
           </defs>
@@ -34,6 +34,9 @@
             <path d="M75 46a22 22 0 0 1 0 28" />
           </g>
         </svg>
+        </button>
+        <audio id="hero-jazz" src="assets/jazz.mp3" preload="none" loop></audio>
+        <span class="music-status" role="status"></span>
         <p class="hero__scroll-hint" aria-hidden="true">SCROLL TO REVEAL <span>↓</span></p>
        </div>
       </section>
@@ -46,8 +49,11 @@
             작은 요소 하나에도 이유를 만들고, 그 이유들을 모아 더 좋은 화면과 경험을 만들 수 있다고 믿습니다.<br class="desktop-break">
             단단한 기본 위에 브랜드만의 분위기와 목적을 더해, 보기 좋은 화면을 넘어 실제로 작동하는 디자인을 만들겠습니다.</p>
         </div>
-        <!-- Figma currently leaves this visual area empty. -->
-        <div class="about__visual" aria-hidden="true"></div>
+        <div class="about__visual">
+          <video class="about__video" src="assets/video.mp4" autoplay muted loop playsinline preload="metadata" aria-label="포트폴리오 소개 영상" tabindex="0">
+            브라우저가 영상 재생을 지원하지 않습니다.
+          </video>
+        </div>
       </section>
       <section class="skills" aria-labelledby="skills-title">
         <p class="section-label">02 · WHATCANIDO</p>

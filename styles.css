@@ -71,7 +71,9 @@ main {
 .about__copy { padding: 0 7.65%; text-align: center; }
 .about h2 { margin: 40px 0 46px; font-size: clamp(25px, 2.292vw, 44px); line-height: 1.4; letter-spacing: -.045em; word-break: keep-all; }
 .about__description { margin: 0; font-size: clamp(14px, 1.042vw, 20px); line-height: 1.65; word-break: keep-all; }
-.about__visual { margin: clamp(90px, 13.125vw, 252px) 2.5% 0; height: min(42.2vw, 810px); border-radius: 24px; background: #d9d9d9; }
+.about__visual { margin: clamp(90px, 13.125vw, 252px) 2.5% 0; height: min(42.2vw, 810px); border-radius: 24px; background: #d9d9d9; overflow: hidden; }
+.about__video { display: block; width: 100%; height: 100%; object-fit: cover; }
+.about__video:focus-visible { outline: 3px solid #fff; outline-offset: -6px; }
 .skills { width: 84.7%; max-width: 1626px; margin: clamp(90px, 8.33vw, 160px) auto 0; padding-bottom: clamp(100px, 12.5vw, 240px); }
 .skills__intro { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; align-items: start; margin: 40px 0 64px; }
 .skills__intro h2 { margin: 0; font-size: clamp(28px, 2.917vw, 56px); line-height: 1.25; letter-spacing: -.045em; word-break: keep-all; }
@@ -112,10 +114,18 @@ img.skill-icon { display: block; object-fit: contain; }
 .works__gallery:focus-visible { outline: 2px solid #222; outline-offset: 5px; }
 .works--poster .works__header > div { grid-column: 2; grid-row: 1; text-align: right; }
 .works--poster .works__description { grid-column: 1; grid-row: 1; }
+.works .popup-gallery { width: 100%; max-width: none; margin-inline: 0; padding: 0 var(--works-gutter); scroll-padding: 0 var(--works-gutter); scroll-snap-type: x mandatory; scrollbar-width: none; cursor: grab; user-select: none; }
+.popup-gallery::-webkit-scrollbar { display: none; }
+.works .popup-gallery.is-dragging { cursor: grabbing; scroll-snap-type: none; scroll-behavior: auto; }
+.popup-controls { display: flex; justify-content: center; gap: 12px; margin-top: 30px; }
+.popup-arrow { display: grid; place-items: center; width: 52px; height: 52px; border: 0; border-radius: 50%; background: #f5f5f7; color: #000; cursor: pointer; }
+.popup-arrow svg { width: 22px; fill: none; stroke: currentColor; stroke-width: 2; }
+.popup-arrow:disabled { opacity: .3; cursor: default; }
+.popup-arrow:focus-visible { outline: 2px solid #000; outline-offset: 3px; }
 .works--poster .works__gallery { direction: rtl; }
 .works--poster .works__gallery img { direction: ltr; }
 .works--banner .works__gallery img { width: min(62vw, 1190px); aspect-ratio: 1920 / 970; }
-.works--banner .banner-viewport { display: block; padding: 0; overflow: hidden; scroll-snap-type: none; }
+.works .banner-viewport { display: block; padding: 0; overflow: hidden; scroll-snap-type: none; }
 .banner-track { position: relative; display: flex; gap: clamp(20px, 2.292vw, 44px); will-change: transform; }
 .banner-controls { display: flex; justify-content: center; align-items: center; gap: 10px; margin-top: 30px; }
 .banner-dots { display: flex; align-items: center; padding: 10px 18px; border-radius: 40px; background: #f5f5f7; min-height: 60px; }
@@ -263,6 +273,11 @@ img.skill-icon { display: block; object-fit: contain; }
   color: #000;
 }
 
+.hero__sound { padding: 0; border: 0; border-radius: 50%; background: transparent; cursor: pointer; }
+.hero__sound svg { display: block; width: 100%; height: auto; }
+.hero__sound:focus-visible { outline: 3px solid #000; outline-offset: 5px; }
+.hero__sound[aria-pressed="true"] { filter: drop-shadow(0 0 8px rgb(255 59 48 / .4)); }
+.music-status { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
 .hero__sound-text {
   font-size: 9px;
   font-weight: 400;
