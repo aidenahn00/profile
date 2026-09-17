@@ -29,6 +29,56 @@
   render();
 })();
 
+// Hide on downward scrolling; reveal on upward scrolling or the top hit area.
+(() => {
+  const nav = document.querySelector('.hero-nav');
+  if (!nav) return;
+  const reveal = document.createElement('button');
+  reveal.type = 'button';
+  reveal.className = 'nav-reveal';
+  reveal.setAttribute('aria-label', '상단 메뉴 나타내기');
+  nav.id = 'main-navigation';
+  reveal.setAttribute('aria-controls', nav.id);
+  nav.after(reveal);
+  let hidden = false;
+  let anchor = Math.max(0, scrollY);
+  function setHidden(value) {
+    hidden = value;
+    nav.classList.toggle('is-hidden', value);
+    nav.inert = value;
+    reveal.hidden = !value;
+    reveal.setAttribute('aria-expanded', String(!value));
+  }
+  function measure() {
+    const box = nav.getBoundingClientRect();
+    reveal.style.left = box.left + 'px';
+    reveal.style.width = box.width + 'px';
+    reveal.style.height = (nav.offsetTop + nav.offsetHeight + 10) + 'px';
+  }
+  function scroll() {
+    const y = Math.max(0, window.scrollY);
+    nav.classList.toggle('is-scrolled', y > 100);
+    if (y <= 30) { setHidden(false); anchor = y; return; }
+    const delta = y - anchor;
+    if (Math.abs(delta) < 8) return;
+    if (delta < 0) setHidden(false);
+    else if (!nav.contains(document.activeElement)) setHidden(true);
+    anchor = y;
+  }
+  reveal.addEventListener('click', () => { setHidden(false); anchor = window.scrollY; });
+  reveal.addEventListener('focus', () => { setHidden(false); nav.querySelector('a')?.focus(); });
+  nav.addEventListener('click', event => {
+    const link = event.target.closest('a');
+    if (link) link.blur();
+  });
+  addEventListener('scroll', scroll, { passive: true });
+  new ResizeObserver(measure).observe(nav);
+  addEventListener('resize', measure);
+  setHidden(false);
+  measure();
+  scroll();
+})();
+
 // Music starts only after an explicit click; pause preserves the play position.
 (() => {
   const button = document.querySelector('button.hero__sound');

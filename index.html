@@ -8,7 +8,19 @@
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <main>
+    <main id="top">
+      <nav class="hero-nav" aria-label="주요 섹션 메뉴">
+        <a href="#top">TOP</a>
+        <a href="#about">ABOUTME</a>
+        <a href="#skills">WHATCANIDO</a>
+        <a href="#popup">POPUP</a>
+        <a href="#poster">POSTER</a>
+        <a href="#banner">BANNER</a>
+        <a href="#detail">DETAILPAGE</a>
+        <a href="#webproject">WEBPROJECT</a>
+        <a href="#contact">CONTACT</a>
+        <span aria-disabled="true" title="이력서 준비 중">RESUME</span>
+      </nav>
       <section class="hero-scroll" aria-labelledby="hero-title">
        <div class="hero">
         <img class="hero__image" src="assets/hero-background-clean.png"
@@ -41,7 +53,7 @@
        </div>
       </section>
       <section class="about" aria-labelledby="about-title">
-        <div class="about__copy">
+        <div class="about__copy" id="about">
           <p class="section-label">01 · ABOUT ME</p>
           <h2 id="about-title">기초를 단단히 쌓아, 오래 쓰이는 디자인을 만듭니다.</h2>
           <p class="about__description">디자인을 시작할 때 가장 먼저 보는 것은 화려한 효과가 아니라고 생각합니다.<br class="desktop-break">
@@ -55,7 +67,7 @@
           </video>
         </div>
       </section>
-      <section class="skills" aria-labelledby="skills-title">
+      <section class="skills" id="skills" aria-labelledby="skills-title">
         <p class="section-label">02 · WHATCANIDO</p>
         <div class="skills__intro">
           <h2 id="skills-title">아이디어를 실제 화면으로<br>완성할 수 있습니다.</h2>
@@ -73,7 +85,7 @@
           <article class="skill-card"><img class="skill-icon" src="assets/icon-notion.jpg" width="52" height="52" alt="" loading="lazy"><div><h3>Notion</h3><p>일정 · 작업 내용을 공유하고, 피드백을 관리 하며, 팀 협업을 문서화할 수 있습니다.</p></div></article>
         </div>
       </section>
-      <section class="works works--popup" aria-labelledby="popup-title">
+      <section class="works works--popup" id="popup" aria-labelledby="popup-title">
         <header class="works__header">
           <div><p class="section-label">03 · WORKS</p><h2 id="popup-title">POPUP</h2></div>
           <p class="works__description">나타내고자 하는 브랜드의 분위기에 맞춰 팝업을 500 x 750px로 디자인 했습니다.</p>
@@ -85,7 +97,7 @@
           <img src="assets/img/popup-oliveyoung.jpg" width="500" height="750" alt="올리브영 POPUP 디자인" loading="lazy">
         </div>
       </section>
-      <section class="works works--poster" aria-labelledby="poster-title">
+      <section class="works works--poster" id="poster" aria-labelledby="poster-title">
         <header class="works__header">
           <div><p class="section-label">04 · WORKS</p><h2 id="poster-title">POSTER</h2></div>
           <p class="works__description">나타내고자 하는 브랜드의 분위기에 맞춰 포스터를 500 x 750px로 디자인 했습니다.</p>
@@ -97,7 +109,7 @@
           <img src="assets/img/poster-adidas.jpg" width="500" height="750" alt="아디다스 POSTER 디자인" loading="lazy">
         </div>
       </section>
-      <section class="works works--banner" aria-labelledby="banner-title">
+      <section class="works works--banner" id="banner" aria-labelledby="banner-title">
         <header class="works__header">
           <div><p class="section-label">05 · WORKS</p><h2 id="banner-title">BANNER</h2></div>
           <p class="works__description">나타내고자 하는 브랜드의 분위기에 맞춰 배너를 1920 x 970px로 디자인 했습니다.</p>
@@ -109,19 +121,19 @@
           <img src="assets/img/banner-baskinrobbins.jpg" width="1920" height="970" alt="배스킨라빈스 BANNER 디자인" loading="lazy">
         </div>
       </section>
-      <section class="works works--detail works--pending" aria-labelledby="detail-title">
+      <section class="works works--detail works--pending" id="detail" aria-labelledby="detail-title">
         <header class="works__header">
           <div><p class="section-label">06 · WHATCANIDO</p><h2 id="detail-title">DETAILPAGE</h2></div>
           <p class="works__description">나타내고자 하는 브랜드의 분위기에 맞춰 팝업을 860 x 10000px로 디자인 했습니다.</p>
         </header>
       </section>
-      <section class="works works--webproject works--pending" aria-labelledby="webproject-title">
+      <section class="works works--webproject works--pending" id="webproject" aria-labelledby="webproject-title">
         <header class="works__header">
           <div><p class="section-label">07 · WORKS</p><h2 id="webproject-title">WEBPROJECT</h2></div>
           <p class="works__description">나타내고자 하는 브랜드의 분위기에 맞춰 팝업을 500 x 750px로 디자인 했습니다.</p>
         </header>
       </section>
-      <footer class="contact" aria-labelledby="contact-title">
+      <footer class="contact" id="contact" aria-labelledby="contact-title">
         <p class="section-label">08 · CONTACT</p>
         <h2 id="contact-title">Thank you</h2>
         <address><a href="tel:01063457497">010-6345-7497</a><a href="mailto:aidenahn00@gmail.com">aidenahn00@gmail.com</a></address>
