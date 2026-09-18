@@ -91,10 +91,38 @@
           <p class="works__description">나타내고자 하는 브랜드의 분위기에 맞춰 팝업을 500 x 750px로 디자인 했습니다.</p>
         </header>
         <div class="works__gallery" tabindex="0" role="region" aria-label="POPUP 작품 모음, 좌우로 스크롤">
-          <img src="assets/img/popup-twosome.jpg" width="500" height="750" alt="투썸플레이스 케이크 POPUP 디자인" loading="lazy">
-          <img src="assets/img/popup-nike.jpg" width="500" height="750" alt="나이키 여름 세일 POPUP 디자인" loading="lazy">
-          <img src="assets/img/popup-netflix.jpg" width="500" height="750" alt="넷플릭스 THE LAST MISSION POPUP 디자인" loading="lazy">
-          <img src="assets/img/popup-oliveyoung.jpg" width="500" height="750" alt="올리브영 POPUP 디자인" loading="lazy">
+          <article class="popup-card" data-project="twosome">
+            <img src="assets/img/popup-twosome.jpg" width="500" height="750" alt="투썸플레이스 신메뉴 POPUP 디자인" loading="lazy">
+            <div class="popup-card__overlay">
+              <h3>투썸플레이스 신메뉴<br>팝업 디자인</h3>
+              <p>실제 브랜드인 투썸플레이스를 분석하고, 신메뉴 출시를 홍보하는 팝업을 디자인했습니다.</p>
+              <button type="button" class="popup-card__more" aria-haspopup="dialog" aria-controls="popup-detail">더보기</button>
+            </div>
+          </article>
+          <article class="popup-card" data-project="nike">
+            <img src="assets/img/popup-nike.jpg" width="500" height="750" alt="나이키 여름 세일 POPUP 디자인" loading="lazy">
+            <div class="popup-card__overlay">
+              <h3>나이키 시즌 세일<br>팝업 디자인</h3>
+              <p>실제 브랜드인 나이키를 분석하고, 시즌 할인 이벤트를 홍보하는 팝업을 디자인하여 포트폴리오 프로젝트를 제작했습니다.</p>
+              <button type="button" class="popup-card__more" aria-haspopup="dialog" aria-controls="popup-detail">더보기</button>
+            </div>
+          </article>
+          <article class="popup-card" data-project="netflix">
+            <img src="assets/img/popup-netflix.jpg" width="500" height="750" alt="넷플릭스 신규 콘텐츠 POPUP 디자인" loading="lazy">
+            <div class="popup-card__overlay">
+              <h3>넷플릭스 신규 콘텐츠<br>공개 팝업 디자인</h3>
+              <p>실제 브랜드인 넷플릭스를 분석하고, 신규 영화 또는 드라마 공개를 홍보하는 팝업을 디자인했습니다.</p>
+              <button type="button" class="popup-card__more" aria-haspopup="dialog" aria-controls="popup-detail">더보기</button>
+            </div>
+          </article>
+          <article class="popup-card" data-project="oliveyoung">
+            <img src="assets/img/popup-oliveyoung.jpg" width="500" height="750" alt="올리브영 POPUP 디자인" loading="lazy">
+            <div class="popup-card__overlay">
+              <h3>올리브영 뷰티 아이템<br>할인 이벤트 팝업 디자인</h3>
+              <p>실제 브랜드인 올리브영을 분석하고, 뷰티 제품 할인 이벤트를 홍보하는 팝업을 디자인했습니다.</p>
+              <button type="button" class="popup-card__more" aria-haspopup="dialog" aria-controls="popup-detail">더보기</button>
+            </div>
+          </article>
         </div>
       </section>
       <section class="works works--poster" id="poster" aria-labelledby="poster-title">
@@ -103,10 +131,22 @@
           <p class="works__description">나타내고자 하는 브랜드의 분위기에 맞춰 포스터를 500 x 750px로 디자인 했습니다.</p>
         </header>
         <div class="works__gallery" tabindex="0" role="region" aria-label="POSTER 작품 모음, 좌우로 스크롤">
-          <img src="assets/img/poster-console.jpg" width="500" height="750" alt="콘솔 가구 POSTER 디자인" loading="lazy">
-          <img src="assets/img/poster-maclipstick.jpg" width="500" height="750" alt="맥 립스틱 POSTER 디자인" loading="lazy">
-          <img src="assets/img/poster-iphonefold.jpg" width="500" height="750" alt="아이폰 폴드 POSTER 디자인" loading="lazy">
-          <img src="assets/img/poster-adidas.jpg" width="500" height="750" alt="아디다스 POSTER 디자인" loading="lazy">
+          <article class="poster-card" data-poster="console">
+            <img src="assets/img/poster-console.jpg" width="500" height="750" alt="CONSOLES 수납가구 POSTER 디자인" loading="lazy">
+            <div class="poster-card__overlay"><h3>CONSOLES 수납가구<br>광고 포스터 디자인</h3><p>원목 수납가구와 편안한 라이프스타일 공간을 표현한 광고 포스터입니다.</p><button type="button" class="poster-card__more" aria-haspopup="dialog" aria-controls="poster-detail">더보기</button></div>
+          </article>
+          <article class="poster-card" data-poster="mac">
+            <img src="assets/img/poster-maclipstick.jpg" width="500" height="750" alt="MAC 러스터글라스 립스틱 POSTER 디자인" loading="lazy">
+            <div class="poster-card__overlay"><h3>MAC 러스터글라스 립스틱<br>신제품 광고 포스터 디자인</h3><p>선명한 레드와 촉촉한 광택감을 강조한 MAC 립스틱 광고 포스터입니다.</p><button type="button" class="poster-card__more" aria-haspopup="dialog" aria-controls="poster-detail">더보기</button></div>
+          </article>
+          <article class="poster-card" data-poster="iphone">
+            <img src="assets/img/poster-iphonefold.jpg" width="500" height="750" alt="iPhone Fold POSTER 디자인" loading="lazy">
+            <div class="poster-card__overlay"><h3>iPhone Fold 신제품 출시<br>포스터 디자인</h3><p>폴더블 구조와 와이드 스크린을 표현한 Apple 신제품 출시 포스터입니다.</p><button type="button" class="poster-card__more" aria-haspopup="dialog" aria-controls="poster-detail">더보기</button></div>
+          </article>
+          <article class="poster-card" data-poster="adidas">
+            <img src="assets/img/poster-adidas.jpg" width="500" height="750" alt="adidas Adione 운동화 POSTER 디자인" loading="lazy">
+            <div class="poster-card__overlay"><h3>adidas Adione 운동화<br>캠페인 포스터 디자인</h3><p>운동화의 기능성과 강한 속도감을 표현한 캠페인 포스터입니다.</p><button type="button" class="poster-card__more" aria-haspopup="dialog" aria-controls="poster-detail">더보기</button></div>
+          </article>
         </div>
       </section>
       <section class="works works--banner" id="banner" aria-labelledby="banner-title">
@@ -139,6 +179,33 @@
         <address><a href="tel:01063457497">010-6345-7497</a><a href="mailto:aidenahn00@gmail.com">aidenahn00@gmail.com</a></address>
       </footer>
     </main>
+    <dialog class="project-detail" id="popup-detail" aria-labelledby="popup-detail-title">
+      <div class="project-detail__surface">
+        <button class="project-detail__close" type="button" aria-label="상세 팝업 닫기" autofocus>×</button>
+        <div class="project-detail__visual"><img src="assets/img/popup-nike.jpg" width="500" height="750" alt="나이키 시즌 세일 팝업 전체 디자인"></div>
+        <div class="project-detail__copy">
+          <h2 id="popup-detail-title">나이키 시즌 세일 팝업 디자인</h2>
+          <div class="project-detail__content"></div>
+          <dl class="project-detail__specs">
+            <dt>제작 규격</dt><dd>크기 : 500 × 750px</dd><dd>비율 : 2:3</dd><dd>툴 : Photoshop</dd><dd>제작 시간 : 1시간</dd>
+          </dl>
+        </div>
+      </div>
+    </dialog>
+    <dialog class="project-detail" id="poster-detail" aria-labelledby="poster-detail-title">
+      <div class="project-detail__surface">
+        <button class="project-detail__close" type="button" aria-label="상세 팝업 닫기">×</button>
+        <div class="project-detail__visual"><img src="assets/img/poster-console.jpg" width="500" height="750" alt=""></div>
+        <div class="project-detail__copy"><h2 id="poster-detail-title"></h2><div class="project-detail__content"></div><dl class="project-detail__specs"></dl></div>
+      </div>
+    </dialog>
+    <dialog class="project-detail banner-detail" id="banner-detail" aria-labelledby="banner-detail-title">
+      <div class="project-detail__surface">
+        <button class="project-detail__close" type="button" aria-label="상세 팝업 닫기">×</button>
+        <div class="project-detail__visual"><img src="assets/img/banner-burgerking.jpg" width="1920" height="970" alt=""></div>
+        <div class="project-detail__copy"><h2 id="banner-detail-title"></h2><div class="project-detail__content"></div><dl class="project-detail__specs"></dl></div>
+      </div>
+    </dialog>
     <script src="script.js" defer></script>
   </body>
 </html>
