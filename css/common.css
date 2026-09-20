@@ -1,0 +1,44 @@
+@font-face {
+  font-family: Pretendard;
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+  src: url("../font/PretendardVariable.woff2") format("woff2");
+}
+
+:root {
+  color-scheme: light;
+  background: #fff;
+  font-family: Pretendard, sans-serif;
+  color: #000;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+}
+
+main {
+  min-height: 100svh;
+  position: relative;
+}
+
+img {
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.section-label {
+  margin: 0;
+  font-size: clamp(14px, 1.042vw, 20px);
+  line-height: 1.5;
+}
