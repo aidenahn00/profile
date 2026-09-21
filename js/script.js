@@ -234,131 +234,31 @@ document.querySelectorAll('.works--popup, .works--poster').forEach(section => {
 // One shared modal presents the details for every POPUP card.
 (() => {
   const dialog = document.querySelector('#popup-detail');
-  const title = dialog.querySelector('.project-detail__copy h2');
-  const visual = dialog.querySelector('.project-detail__visual img');
-  const content = dialog.querySelector('.project-detail__content');
-  const specs = dialog.querySelector('.project-detail__specs');
-  const projects = {
-    twosome: {
-      title: '투썸플레이스 신메뉴 출시 팝업 디자인', image: 'img/popup-twosome.jpg',
-      paragraphs: [
-        '실제 브랜드인 투썸플레이스를 분석하고, 신메뉴 출시를 홍보하는 팝업을 디자인했습니다.',
-        '먼저, 투썸플레이스의 브랜드 아이덴티티 및 디자인 스타일을 실제 가까운 지점의 포스터와 투썸플레이스 홈페이지 이벤트 페이지를 통해 조사했습니다.',
-        '그런 다음 AI를 이용해 가상의 투썸 메뉴를 텍스트 형태로 뽑았습니다.',
-        '이후 Pinterest에서 관련 디저트 키워드로 메뉴 레퍼런스 이미지를 찾고, 이를 참고해 가상의 메뉴 이미지를 제작했습니다.',
-        '시각적 계층 구조를 고려하여 배치와 타이포그래피 간의 위계를 만들고 높은 가독성을 유지했습니다.',
-        '팝업 디자인인 만큼 사용자의 행동을 유도하는 CTA 버튼을 배경에 어우러지면서도 눈에 띄는 컬러로 배치해 목적이 명확하게 전달되도록 구성했습니다.',
-        '주요 디자인 포인트는 선반 위에 올라간 케이크에 중점을 두면서도 텍스트 자체의 포인트가 들어가게 하여 전반적으로 고급스럽고 심플한 느낌을 냈습니다.',
-        '전체 제작 시간은 약 1시간입니다.'
-      ]
-    },
-    nike: {
-      title: '나이키 시즌 세일 팝업 디자인', image: 'img/popup-nike.jpg',
-      paragraphs: [
-        '나이키 브랜드를 분석하고, 시즌 할인 이벤트를 홍보하는 팝업을 디자인했습니다.',
-        '먼저, 나이키의 브랜드 아이덴티티 및 디자인 스타일을 조사했습니다. 나이키 브랜드 아이덴티티는 JUST DO IT이라는 문구에서 나오는 강렬한 스포츠성이라고 생각했습니다.',
-        '브랜드 아이덴티티를 유지하면서 세일 분위기를 표현하기 위해 문구에 어울리는 나이키 폰트를 찾는 데에서 출발했으며, 나이키의 할인 이벤트 및 프로모션 사례는 나이키 공식 페이지를 통해 조사했습니다.',
-        '이후 Pinterest에서 관련 이미지를 찾았습니다. 달리는 인물을 중심 이미지로 활용하려고 하다가, 프로모션 페이지인 만큼 인물보다 신발 오브젝트에 초점을 맞추는 것이 할인 이벤트를 직관적으로 홍보한다고 판단하여 강렬한 녹색의 러닝화 이미지를 중심에 배치했습니다.',
-        '팝업 상에서는 할인 정보가 가장 먼저 보이도록 하이어라키(시각적 위계)를 구성하는 데에 초점을 맞췄으며, 강한 시각적 대비를 위해 세일을 강조하는 폰트를 키우고 자간과 행간을 조정했습니다.'
-      ]
-    },
-    oliveyoung: {
-      title: '올리브영 뷰티 아이템 할인 이벤트 팝업 디자인', image: 'img/popup-oliveyoung.jpg',
-      paragraphs: [
-        '실제 브랜드인 올리브영을 분석하고, 뷰티 제품 할인 이벤트를 홍보하는 팝업을 디자인하여 포트폴리오 프로젝트를 제작했습니다.',
-        '올리브영 홈페이지와 Pinterest에서 각종 프로모션 레퍼런스를 수집했습니다. 명확한 브랜드 아이덴티티가 존재하지 않아 MIMZ와 콜라보한 팝업을 벤치마킹하여 디자인했습니다.',
-        '할인 혜택이 가장 먼저 보이도록 구성했으며, 뷰티 브랜드 특유의 깔끔하고 세련된 분위기를 표현하기 위해 라이트하고 가벼운 느낌을 구현했습니다.'
-      ]
-    },
-    netflix: {
-      title: '넷플릭스 신규 콘텐츠 공개 팝업 디자인', image: 'img/popup-netflix.jpg',
-      paragraphs: [
-        '실제 브랜드인 넷플릭스를 분석하고, 신규 영화 또는 드라마 공개를 홍보하는 팝업을 디자인하여 포트폴리오 프로젝트를 제작했습니다.',
-        '넷플릭스의 브랜드 아이덴티티 및 디자인 스타일을 실제 넷플릭스 팝업 디자인 서너 개를 분석하며 조사했습니다. 로고와 타이포그래피를 참고해 적절한 간격을 배치하고, 전반적인 이미지 대비를 조정해 강렬한 느낌을 강조했습니다.',
-        '콘텐츠 이미지가 가장 돋보이도록 구성했으며, 넷플릭스 브랜드 컬러를 적절히 활용하여 영화 및 드라마 포스터와 같은 몰입감 있는 분위기를 표현했습니다.'
-      ]
-    }
-  };
-  const specification = ['제작 규격', '크기 : 500 × 750px', '비율 : 2 : 3', '툴 : Photoshop', '제작 시간 : 1시간'];
-  const triggers = [...document.querySelectorAll('.popup-card__more')];
-  const reduced = matchMedia('(prefers-reduced-motion: reduce)');
-  let opening = false;
+  const details = [...dialog.querySelectorAll('[data-popup-detail]')];
+  const triggers = [...document.querySelectorAll('.popup-card')];
   let closing = false;
-  let detailAnimation = null;
   let activeTrigger = null;
   let activeCard = null;
   let restoreFocus = true;
-  const cardFrames = [
-    { transform: 'perspective(1200px) rotateY(0deg)', opacity: 1 },
-    { transform: 'perspective(1200px) rotateY(-82deg) scale(.96)', opacity: .15 }
-  ];
-  const fullDetail = { transform: 'perspective(1400px) translate(0, 0) rotateY(0deg) scale(1)', opacity: 1 };
-  function foldedDetail() {
-    const origin = activeCard.getBoundingClientRect();
-    const destination = dialog.getBoundingClientRect();
-    const x = origin.left + origin.width / 2 - destination.left - destination.width / 2;
-    const y = origin.top + origin.height / 2 - destination.top - destination.height / 2;
-    return { transform: `perspective(1400px) translate(${x}px, ${y}px) rotateY(82deg) scale(${origin.width / destination.width}, ${origin.height / destination.height})`, opacity: .15 };
-  }
-  function renderProject(project) {
-    title.textContent = project.title;
-    visual.src = project.image;
-    visual.alt = `${project.title} 전체 디자인`;
-    const summaryHeading = document.createElement('h3');
-    summaryHeading.textContent = '간략한 텍스트';
-    const summary = document.createElement('p');
-    summary.className = 'project-detail__summary';
-    summary.textContent = project.paragraphs[0];
-    const processHeading = document.createElement('h3');
-    processHeading.textContent = '제작 과정';
-    const paragraphs = project.paragraphs.slice(1).map(text => {
-      const paragraph = document.createElement('p');
-      paragraph.textContent = text;
-      return paragraph;
-    });
-    content.replaceChildren(summaryHeading, summary, processHeading, ...paragraphs);
-    specs.replaceChildren(...specification.map((text, index) => {
-      const element = document.createElement(index ? 'dd' : 'dt');
-      element.textContent = text;
-      return element;
-    }));
-  }
   let previousOverflow = '';
   triggers.forEach(trigger => trigger.addEventListener('click', () => {
-    if (opening || closing || dialog.open) return;
-    const project = projects[trigger.closest('.popup-card').dataset.project];
-    if (!project) return;
-    opening = true;
-    activeTrigger = trigger;
-    activeCard = trigger.closest('.popup-card');
+    if (closing || dialog.open) return;
+    const detail = details.find(item => item.dataset.popupDetail === trigger.dataset.project);
+    if (!detail) return;
+    activeTrigger = trigger.querySelector('.popup-card__more');
+    activeCard = trigger;
     restoreFocus = true;
-    renderProject(project);
+    details.forEach(item => { item.hidden = item !== detail; });
     previousOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
     dialog.showModal();
     dialog.scrollTop = 0;
-    if (!reduced.matches) {
-      const cardAnimation = activeCard.animate(cardFrames, { duration: 720, easing: 'cubic-bezier(.22,.61,.36,1)', fill: 'forwards' });
-      cardAnimation.finished.finally(() => cardAnimation.cancel());
-      detailAnimation = dialog.animate([foldedDetail(), fullDetail], { duration: 720, easing: 'cubic-bezier(.22,.61,.36,1)', fill: 'both' });
-    }
-    opening = false;
   }));
-  async function closeDetail({ focusTrigger = true } = {}) {
+  function closeDetail({ focusTrigger = true } = {}) {
     if (closing || !dialog.open) return;
     closing = true;
     restoreFocus = focusTrigger;
-    if (!reduced.matches) {
-      dialog.classList.add('is-closing');
-      if (detailAnimation) {
-        detailAnimation.reverse();
-        await detailAnimation.finished.catch(() => {});
-      } else {
-        detailAnimation = dialog.animate([fullDetail, foldedDetail()], { duration: 720, easing: 'cubic-bezier(.22,.61,.36,1)', fill: 'forwards' });
-        await detailAnimation.finished.catch(() => {});
-      }
-      dialog.close();
-    } else dialog.close();
+    dialog.close();
     closing = false;
   }
   dialog.querySelector('.project-detail__close').addEventListener('click', () => closeDetail({ focusTrigger: false }));
@@ -369,10 +269,8 @@ document.querySelectorAll('.works--popup, .works--poster').forEach(section => {
     if (event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom) closeDetail();
   });
   dialog.addEventListener('close', () => {
-    detailAnimation?.cancel();
-    detailAnimation = null;
-    dialog.classList.remove('is-closing');
     document.body.style.overflow = previousOverflow;
+    details.forEach(item => { item.hidden = true; });
     if (restoreFocus) activeTrigger?.focus({ preventScroll: true });
     else activeCard?.closest('.works__gallery')?.focus({ preventScroll: true });
   });
@@ -381,75 +279,26 @@ document.querySelectorAll('.works--popup, .works--poster').forEach(section => {
 // Poster cards use the same detail treatment as the POPUP work.
 (() => {
   const dialog = document.querySelector('#poster-detail');
-  const title = dialog.querySelector('h2');
-  const image = dialog.querySelector('.project-detail__visual img');
-  const content = dialog.querySelector('.project-detail__content');
-  const specs = dialog.querySelector('.project-detail__specs');
-  const reduced = matchMedia('(prefers-reduced-motion: reduce)');
-  const projects = {
-    mac: { title: 'MAC 러스터글라스 립스틱 신제품 광고 포스터 디자인', image: 'img/poster-maclipstick.jpg', paragraphs: [
-      '실제 코스메틱 브랜드 MAC을 기반으로, 러스터글라스 립스틱 신제품을 홍보하는 광고 포스터를 디자인하여 포트폴리오 프로젝트를 제작했습니다. 립스틱의 선명한 레드 컬러와 촉촉한 광택감을 핵심 비주얼로 표현하고, MAC 특유의 시크하고 강렬한 브랜드 이미지를 강조했습니다.',
-      'MAC의 브랜드 아이덴티티와 기존 코스메틱 광고 디자인을 분석하고, 러스터글라스 립스틱의 특징인 수분감과 투명한 글로우 컬러가 효과적으로 전달될 수 있도록 전체적인 콘셉트를 구성했습니다.',
-      '제품이 가장 먼저 시선에 들어오도록 여러 형태의 립 제품을 중앙 하단에 배치하고, 레드 계열의 단색 배경과 입체적인 기하학 구조물을 활용해 제품에 자연스럽게 시선이 집중되도록 디자인했습니다.',
-      '배경과 오브젝트에는 서로 다른 명도와 질감의 레드 컬러를 적용하여 깊이감을 표현했습니다. 블랙과 실버 컬러의 제품 패키지가 강한 대비를 이루도록 구성해 MAC 특유의 세련되고 시크한 분위기를 강조했습니다.',
-      '상단에는 영문 제품명을 크게 배치하고 제품 이미지와 충분한 여백을 두어 정보의 위계를 명확하게 구성했습니다. 또한 “즉각적으로 녹아드는 수분감과 투명한 글로우 컬러”라는 핵심 메시지를 함께 배치해 제품의 특징을 짧고 직관적으로 전달했습니다.'
-    ] },
-    iphone: { title: 'iPhone Fold 신제품 출시 포스터 디자인', image: 'img/poster-iphonefold.jpg', paragraphs: [
-      '실제 전자제품 브랜드인 Apple의 디자인 아이덴티티를 바탕으로, 가상의 신제품 iPhone Fold 출시를 홍보하는 포스터를 디자인하여 포트폴리오 프로젝트를 제작했습니다. 폴더블 스마트폰의 형태적 특징과 와이드 스크린의 사용성을 직관적으로 보여주는 동시에 Apple 특유의 미니멀하고 정돈된 브랜드 이미지를 표현하는 데 중점을 두었습니다.',
-      'Apple의 제품 광고와 디자인 스타일을 분석하고, 불필요한 장식 요소를 최소화하면서 제품 자체가 중심이 되는 미니멀한 테크 광고 콘셉트로 구성했습니다. 제품 중심의 레이아웃, 기능 정보의 시각화, 미니멀한 테크 무드를 포스터 전반에 반영했습니다.',
-      '중앙에는 접힌 상태의 iPhone Fold를 크게 배치하여 폴더블 구조와 전면·후면 디자인을 한눈에 확인할 수 있도록 했습니다. 전체적인 블루 컬러와 제품 색상을 통일하여 차분하면서도 미래지향적인 분위기를 표현했습니다.',
-      '상단에는 “새로운 세상을 펼치다”라는 메인 카피와 제품명을 큰 타이포그래피로 배치했습니다. 하단에는 “4:3 비율의 압도적 와이드 스크린”이라는 기능 메시지를 강조해 폴더블 디스플레이의 특징이 짧고 명확하게 전달되도록 구성했습니다.',
-      '배경에는 제품명과 연결되는 대형 FOLD 타이포그래피를 낮은 대비로 배치해 화면에 깊이감을 더했습니다. 충분한 여백과 중앙 정렬로 정보 위계를 구분하고 Apple의 절제된 디자인 언어와 신제품의 기술적인 이미지를 함께 표현했습니다.'
-    ] },
-    adidas: { title: 'adidas Adione 운동화 캠페인 포스터 디자인', image: 'img/poster-adidas.jpg', paragraphs: [
-      '실제 스포츠 브랜드 adidas의 브랜드 아이덴티티를 분석하고, 가상의 신제품 운동화 Adione을 중심으로 한 캠페인 포스터를 디자인하여 포트폴리오 프로젝트를 제작했습니다. 특수 방수 처리와 기능성 에어리즘 소재라는 제품의 기능적 특징을 전달하면서 운동화의 속도감과 역동적인 이미지를 강하게 표현했습니다.',
-      'adidas의 기존 스포츠 캠페인과 운동화 광고 비주얼을 분석하고, 제품의 기능성과 브랜드 특유의 역동적인 이미지를 동시에 보여줄 수 있도록 전체적인 디자인 방향을 설정했습니다.',
-      '운동화를 화면 중앙에 사선으로 크게 배치하고 공중으로 튀어 오르는 듯한 구도를 적용했습니다. 제품 주변의 검은색 잉크 파편 효과와 바닥 입자 표현으로 운동 시 발생하는 강한 충격과 에너지를 시각적으로 표현했습니다.',
-      '전체적인 컬러는 블랙·화이트·그레이의 모노톤으로 제한하여 제품의 형태와 adidas의 시그니처 스트라이프가 명확하게 드러나도록 구성했습니다. 강한 명암 대비와 질감 표현으로 스포티하면서도 묵직한 분위기를 강조했습니다.',
-      '상단에는 adidas 로고와 Adione 제품명을 크게 배치하고, 그 아래에 “특수 방수 처리, 기능성 에어리즘 소재”라는 핵심 기능을 간결하게 표현했습니다. 충분한 여백으로 정보가 이미지의 역동성을 방해하지 않으면서도 자연스럽게 읽히도록 구성했습니다.'
-    ] },
-    console: { title: 'CONSOLES 수납가구 인테리어 광고 포스터 디자인', image: 'img/poster-console.jpg', paragraphs: [
-      '가구·인테리어 브랜드의 카탈로그와 공간 연출 방식을 분석하고, 원목 수납가구 CONSOLES를 중심으로 한 라이프스타일 광고 포스터를 디자인하여 포트폴리오 프로젝트를 제작했습니다. 제품의 원목 소재와 따뜻한 공간 분위기를 연결해 편안하고 여유로운 생활 공간을 전달하는 데 중점을 두었습니다.',
-      '가구 브랜드의 카탈로그와 인테리어 공간 연출 사례를 조사하고, 제품과 공간이 자연스럽게 어우러지는 미니멀한 라이프스타일 광고를 콘셉트로 설정했습니다. 실제 공간에서 사용하는 모습을 통해 제품의 소재와 분위기가 함께 전달되도록 구성했습니다.',
-      '포스터 중앙 하단에는 원목 콘솔 수납장을 크게 배치하고 주변 오브젝트를 최소화했습니다. 수직적인 원목 패턴과 라탄 소재 도어처럼 서로 다른 질감이 드러나도록 표현해 수납가구의 따뜻하고 자연스러운 소재감을 강조했습니다.',
-      '공간은 베이지와 우드 컬러 중심의 뉴트럴 톤으로 구성하고, 왼쪽에서 들어오는 자연광과 부드러운 그림자로 편안하고 차분한 분위기를 연출했습니다. 조명과 그림자가 자연스럽게 연결되도록 하여 실제 인테리어 공간에 가구가 놓여 있는 듯한 현실감을 표현했습니다.',
-      '상단에는 “all in · live simple.”이라는 라이프스타일 메시지와 CONSOLES 제품명을 여백감 있게 배치했습니다. 얇고 절제된 영문 타이포그래피와 간결한 오브젝트 배치로 자연스럽고 정돈된 라이프스타일을 표현했습니다.'
-    ] }
-  };
-  const specification = ['제작 규격', '크기 : 500 × 750px', '비율 : 2 : 3', '툴 : Photoshop', '제작 시간 : 약 1시간'];
-  let activeCard, activeTrigger, animation, closing = false, restoreFocus = true, previousOverflow = '';
-  const full = { transform: 'perspective(1400px) translate(0, 0) rotateY(0deg) scale(1)', opacity: 1 };
-  function folded() {
-    const origin = activeCard.getBoundingClientRect(), target = dialog.getBoundingClientRect();
-    const x = origin.left + origin.width / 2 - target.left - target.width / 2;
-    const y = origin.top + origin.height / 2 - target.top - target.height / 2;
-    return { transform: `perspective(1400px) translate(${x}px, ${y}px) rotateY(82deg) scale(${origin.width / target.width}, ${origin.height / target.height})`, opacity: .15 };
-  }
-  function render(project) {
-    title.textContent = project.title; image.src = project.image; image.alt = `${project.title} 전체 디자인`;
-    const summaryHeading = document.createElement('h3'); summaryHeading.textContent = '간략한 텍스트';
-    const summary = document.createElement('p'); summary.className = 'project-detail__summary'; summary.textContent = project.paragraphs[0];
-    const heading = document.createElement('h3'); heading.textContent = '제작 과정';
-    content.replaceChildren(summaryHeading, summary, heading, ...project.paragraphs.slice(1).map(text => { const p = document.createElement('p'); p.textContent = text; return p; }));
-    specs.replaceChildren(...specification.map((text, index) => { const element = document.createElement(index ? 'dd' : 'dt'); element.textContent = text; return element; }));
-  }
-  document.querySelectorAll('.poster-card__more').forEach(trigger => trigger.addEventListener('click', () => {
+  const details = [...dialog.querySelectorAll('[data-poster-detail]')];
+  let activeCard, activeTrigger, closing = false, restoreFocus = true, previousOverflow = '';
+  document.querySelectorAll('.poster-card').forEach(trigger => trigger.addEventListener('click', () => {
     if (dialog.open || closing) return;
-    activeTrigger = trigger; activeCard = trigger.closest('.poster-card'); restoreFocus = true;
-    render(projects[activeCard.dataset.poster]); previousOverflow = document.body.style.overflow; document.body.style.overflow = 'hidden';
+    const detail = details.find(item => item.dataset.posterDetail === trigger.dataset.poster);
+    if (!detail) return;
+    activeCard = trigger; activeTrigger = trigger.querySelector('.poster-card__more'); restoreFocus = true;
+    details.forEach(item => { item.hidden = item !== detail; });
+    previousOverflow = document.body.style.overflow; document.body.style.overflow = 'hidden';
     dialog.showModal(); dialog.scrollTop = 0;
-    if (!reduced.matches) animation = dialog.animate([folded(), full], { duration: 720, easing: 'cubic-bezier(.22,.61,.36,1)', fill: 'both' });
   }));
-  async function close({ focusTrigger = true } = {}) {
+  function close({ focusTrigger = true } = {}) {
     if (closing || !dialog.open) return;
-    closing = true; restoreFocus = focusTrigger; dialog.classList.add('is-closing');
-    if (!reduced.matches && animation) { animation.reverse(); await animation.finished.catch(() => {}); }
+    closing = true; restoreFocus = focusTrigger;
     dialog.close(); closing = false;
   }
   dialog.querySelector('.project-detail__close').addEventListener('click', () => close({ focusTrigger: false }));
   dialog.addEventListener('cancel', event => { event.preventDefault(); close(); });
   dialog.addEventListener('click', event => { if (event.target === dialog) close(); });
-  dialog.addEventListener('close', () => { animation?.cancel(); animation = null; dialog.classList.remove('is-closing'); document.body.style.overflow = previousOverflow; if (restoreFocus) activeTrigger?.focus({ preventScroll: true }); else activeCard?.closest('.works__gallery')?.focus({ preventScroll: true }); });
+  dialog.addEventListener('close', () => { document.body.style.overflow = previousOverflow; details.forEach(item => { item.hidden = true; }); if (restoreFocus) activeTrigger?.focus({ preventScroll: true }); else activeCard?.closest('.works__gallery')?.focus({ preventScroll: true }); });
 })();
 
 // Banner carousel with centered, single-image snapping.
@@ -472,21 +321,23 @@ document.querySelectorAll('.works--banner').forEach(section => {
   let gesture = null;
   let suppressClickUntil = 0;
   const track = document.createElement('div');
+  const loopOffset = looping ? slides.length : 0;
   track.className = 'banner-track';
   slides.forEach((slide, index) => {
     slide.dataset.bannerIndex = index;
     track.append(slide);
   });
-  const clone = slides[0].cloneNode(true);
-  clone.alt = '';
-  clone.setAttribute('aria-hidden', 'true');
-  clone.loading = 'eager';
-  if (looping) track.append(clone);
-  const leadingClone = slides[slides.length - 1].cloneNode(true);
-  leadingClone.alt = '';
-  leadingClone.setAttribute('aria-hidden', 'true');
-  leadingClone.loading = 'eager';
-  if (looping) track.prepend(leadingClone);
+  const cloneSlide = slide => {
+    const clone = slide.cloneNode(true);
+    clone.alt = '';
+    clone.setAttribute('aria-hidden', 'true');
+    clone.loading = 'eager';
+    return clone;
+  };
+  if (looping) {
+    track.prepend(...slides.map(cloneSlide));
+    track.append(...slides.map(cloneSlide));
+  }
   viewport.append(track);
   viewport.classList.add('banner-viewport');
   viewport.setAttribute('aria-label', label + ' 슬라이더');
@@ -523,15 +374,16 @@ document.querySelectorAll('.works--banner').forEach(section => {
     toggle.disabled = atEnd();
     toggle.setAttribute('aria-label', atEnd() ? '마지막 팝업입니다. 이전 팝업을 선택하면 다시 재생할 수 있습니다.' : label + (paused ? ' 자동 재생' : ' 자동 재생 일시정지'));
     toggle.innerHTML = paused || atEnd()
-      ? '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m8 5 11 7-11 7z"/></svg>'
-      : '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5h4v14H7zm6 0h4v14h-4z"/></svg>';
+      ? '<img src="img/icon-play.svg" alt="" aria-hidden="true">'
+      : '<img src="img/icon-pause.svg" alt="" aria-hidden="true">';
   }
-  function position(physicalIndex, animate = true) {
-    const slide = track.children[physicalIndex + (looping ? 1 : 0)];
+  function show(physicalIndex, animate = true) {
+    const slide = track.children[physicalIndex];
     const center = (viewport.clientWidth - slide.clientWidth) / 2;
     track.style.transition = animate && !reduced.matches ? 'transform 800ms cubic-bezier(.22,.61,.36,1)' : 'none';
     track.style.transform = `translate3d(${center - slide.offsetLeft}px,0,0)`;
   }
+  const position = (slideIndex, animate = true) => show(loopOffset + slideIndex, animate);
   function select(next, automatic = false) {
     const loop = looping && automatic && index === slides.length - 1 && next === 0;
     const reverseLoop = looping && automatic === -1 && index === 0 && next === slides.length - 1;
@@ -539,7 +391,7 @@ document.querySelectorAll('.works--banner').forEach(section => {
     elapsed = atEnd() ? duration : 0;
     previous = 0;
     wrapping = (loop || reverseLoop) && !reduced.matches;
-    position(wrapping ? (reverseLoop ? -1 : slides.length) : index);
+    show(wrapping ? (reverseLoop ? loopOffset - 1 : loopOffset + slides.length) : loopOffset + index);
     update();
   }
   function bannerAt(x, y) {
@@ -552,22 +404,20 @@ document.querySelectorAll('.works--banner').forEach(section => {
     const next = Number(slide.dataset.bannerIndex);
     return Number.isInteger(next) ? { next, slide, physicalIndex } : null;
   }
-  let activeBanner, bannerAnimation, bannerClosing = false, bannerOverflow = '';
+  let bannerClosing = false, bannerOverflow = '';
   const bannerTitle = detailDialog.querySelector('h2');
   const bannerImage = detailDialog.querySelector('.project-detail__visual img');
   const bannerContent = detailDialog.querySelector('.project-detail__content');
   const bannerSpecs = detailDialog.querySelector('.project-detail__specs');
-  const bannerFull = { transform: 'perspective(1400px) translate(0, 0) rotateY(0deg) scale(1)', opacity: 1 };
   function openBannerDetail(target) {
     const project = bannerProjects[target.next];
     if (!project || detailDialog.open) return;
-    activeBanner = target.slide; bannerTitle.textContent = project.title; bannerImage.src = project.image; bannerImage.alt = `${project.title} 전체 디자인`;
+    bannerTitle.textContent = project.title; bannerImage.src = project.image; bannerImage.alt = `${project.title} 전체 디자인`;
     const summaryHeading = document.createElement('h3'); summaryHeading.textContent = '간략한 텍스트';
     const processHeading = document.createElement('h3'); processHeading.textContent = '제작 과정';
     bannerContent.replaceChildren(summaryHeading, ...project.summary.map(text => { const p = document.createElement('p'); p.className = 'project-detail__summary'; p.textContent = text; return p; }), processHeading, ...project.process.map(text => { const p = document.createElement('p'); p.textContent = text; return p; }));
     bannerSpecs.replaceChildren(...['제작 규격', '크기 : 1920 × 970px', '비율 : 2 : 1', `툴 : ${project.tool}`].map((text, i) => { const el = document.createElement(i ? 'dd' : 'dt'); el.textContent = text; return el; }));
     bannerOverflow = document.body.style.overflow; document.body.style.overflow = 'hidden'; detailDialog.showModal(); detailDialog.scrollTop = 0; sync();
-    if (!reduced.matches) { const from = (() => { const origin = activeBanner.getBoundingClientRect(), destination = detailDialog.getBoundingClientRect(); return { transform: `perspective(1400px) translate(${origin.left + origin.width / 2 - destination.left - destination.width / 2}px, ${origin.top + origin.height / 2 - destination.top - destination.height / 2}px) rotateY(82deg) scale(${origin.width / destination.width}, ${origin.height / destination.height})`, opacity: .15 }; })(); bannerAnimation = detailDialog.animate([from, bannerFull], { duration: 720, easing: 'cubic-bezier(.22,.61,.36,1)', fill: 'both' }); }
   }
   function handleBannerTap(target) {
     if (!target) return false;
@@ -579,16 +429,15 @@ document.querySelectorAll('.works--banner').forEach(section => {
     }
     return true;
   }
-  async function closeBannerDetail() {
+  function closeBannerDetail() {
     if (bannerClosing || !detailDialog.open) return;
-    bannerClosing = true; detailDialog.classList.add('is-closing');
-    if (!reduced.matches && bannerAnimation) { bannerAnimation.reverse(); await bannerAnimation.finished.catch(() => {}); }
+    bannerClosing = true;
     detailDialog.close(); bannerClosing = false;
   }
   detailDialog.querySelector('.project-detail__close').addEventListener('click', closeBannerDetail);
   detailDialog.addEventListener('cancel', event => { event.preventDefault(); closeBannerDetail(); });
   detailDialog.addEventListener('click', event => { if (event.target === detailDialog) closeBannerDetail(); });
-  detailDialog.addEventListener('close', () => { bannerAnimation?.cancel(); bannerAnimation = null; detailDialog.classList.remove('is-closing'); document.body.style.overflow = bannerOverflow; viewport.focus({ preventScroll: true }); sync(); });
+  detailDialog.addEventListener('close', () => { document.body.style.overflow = bannerOverflow; viewport.focus({ preventScroll: true }); sync(); });
   track.addEventListener('transitionend', event => {
     if (event.propertyName === 'transform' && wrapping) {
       wrapping = false;
@@ -698,3 +547,39 @@ document.querySelectorAll('.works--banner').forEach(section => {
   update();
   position(0, false);
 });
+
+// Detail-page cards open their long-form design images in a scrollable dialog.
+(() => {
+  const dialog = document.querySelector('#detail-page-detail');
+  const image = dialog.querySelector('.project-detail__visual img');
+  const pages = {
+    headset: { image: 'img/detail-headset.jpg', alt: '헤드셋 상세 페이지 디자인', height: 10000 },
+    lotion: { image: 'img/detail-lotion.jpg', alt: '로션 상세 페이지 디자인', height: 10000 },
+    candy: { image: 'img/detail-candy-thumb.jpg', alt: '캔디 상세 페이지 디자인', height: 1800 }
+  };
+  let activeCard;
+  let previousOverflow = '';
+  function close() {
+    if (!dialog.open) return;
+    dialog.close();
+  }
+  document.querySelectorAll('.detail-card').forEach(card => card.addEventListener('click', () => {
+    const page = pages[card.dataset.detailPage];
+    if (!page || dialog.open) return;
+    activeCard = card;
+    image.src = page.image;
+    image.alt = page.alt;
+    image.height = page.height;
+    previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    dialog.showModal();
+    dialog.scrollTop = 0;
+  }));
+  dialog.querySelector('.project-detail__close').addEventListener('click', close);
+  dialog.addEventListener('cancel', event => { event.preventDefault(); close(); });
+  dialog.addEventListener('click', event => { if (event.target === dialog) close(); });
+  dialog.addEventListener('close', () => {
+    document.body.style.overflow = previousOverflow;
+    activeCard?.focus({ preventScroll: true });
+  });
+})();

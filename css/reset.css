@@ -1,0 +1,76 @@
+* {
+    margin: 0;
+    padding: 0;
+
+    /* 폰트를 부드럽게 */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+
+    /* 웹킷 마음대로 폰트 크기 조절 막음 */
+    -webkit-text-size-adjust: none;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-size: inherit;
+    font-weight: inherit;
+}
+
+ul,
+ol {
+    list-style: none;
+}
+
+img {
+    max-width: 100%;
+    border: none;
+}
+
+table {
+    border-collapse: collapse;
+}
+
+address {
+    font-style: normal;
+}
+
+a {
+    color: inherit;
+    text-decoration: inherit;
+}
+
+textarea {
+    resize: none;
+    overflow: hidden;
+}
+
+button,
+input,
+textarea {
+    background-color: transparent;
+    border: none;
+    border-radius: 0;
+
+    outline: none;
+
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+}
+
+button,
+input[type="checkbox"] {
+    color: inherit;
+    cursor: pointer;
+    /* 더블 탭으로 확대 삭제 */
+    touch-action: manipulation;
+    /* 복사를 위한 커서 선택 막기 */
+    user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+}

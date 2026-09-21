@@ -1,17 +1,119 @@
-@font-face {
-  font-family: Pretendard;
-  font-weight: 100 900;
-  font-style: normal;
-  font-display: swap;
-  src: url("../font/PretendardVariable.woff2") format("woff2");
+/* 변수 */
+:root {
+    /* 디바이스 별 글씨 크기 기준 */
+    --fs-pc: 16px;
+    --fs-pad: 14px;
+    --fs-mo: 12px;
+
+    /* 행간 */
+    --lh1: 1.4;
+    --lh2: 1.6;
+
+    /* 태그 글씨 크기 */
+    --fs-h1: 3.1875rem;
+    --fs-h2: 2.375rem;
+    --fs-h3: 1.75rem;
+    --fs-h4: 1.3125rem;
+    --fs-body1: 1rem;
+    --fs-body2: .8rem;
+    --fs-detail: .625rem;
+
+    /* 글씨 두께 */
+    --fw1: 400;
+    --fw2: 700;
+    --fw3: 800;
+
+    /* 여백 */
+    --space-3x-large: 6rem;
+    --space-2x-large: 3rem;
+    --space-x-large: 2rem;
+    --space-normal: 1rem;
+    --space-x-small: .5rem;
+    --space-2x-small: .25rem;
+
+    /* 색상 */
+
+    /* 메인 오렌지 색상 */
+    --nuvoaorange-0: #FFAFAB;
+    --nuvoaorange-100: #FF8D87;
+    --nuvoaorange-200: #FF6D65;
+    --nuvoaorange-300: #FF5148;
+    --nuvoaorange-400: #FF3B30;
+    --nuvoaorange-500: #FF2A1F;
+    --nuvoaorange-600: #FF1E12;
+    --nuvoaorange-700: #FF1509;
+    --nuvoaorange-800: #FF1003;
+    --nuvoaorange-900: #FF0D00;
+
+    /* 그레이 컬러 */
+    --gray-0: #FFFFFF;
+    --gray-100: #F3F3F3;
+    --gray-200: #F3F3F3;
+    --gray-300: #E7E7E7;
+    --gray-400: #D6D6D6;
+    --gray-500: #BEBEBE;
+    --gray-600: #9E9E9E;
+    --gray-700: #777777;
+    --gray-800: #494949;
+    --gray-900: #1A1A1A;
+
+    /* 서브 컬러 */
+    --sub-color: #793300;
+    --button-color: #f5f5f7;
+
+    --works-gutter: max(7.65vw, calc((100vw - 1626px) / 2));
 }
 
-:root {
-  color-scheme: light;
-  background: #fff;
-  font-family: Pretendard, sans-serif;
-  color: #000;
+
+
+
+html {
+    font-size: var(--fs-pc);
+    line-height: var(--lh1);
+
+    font-family: 'Pretendard', sans-serif;
+    font-weight: var(--fw1);
+    color: var(--gray-900);
 }
+@media (max-width: 1024px) {
+    html {
+        font-size: var(--fs-pad);
+    }
+}
+@media (max-width: 768px) {
+    html {
+        font-size: var(--fs-mo);
+    }
+}
+
+
+
+
+/* 기본 타이포그래피 */
+h1 {
+    font-size: var(--fs-h1);
+}
+h2 {
+    font-size: var(--fs-h2);
+}
+h3 {
+    font-size: var(--fs-h3);
+}
+h4 {
+    font-size: var(--fs-h4);
+}
+h1,
+h2,
+h3,
+h4 {
+    line-height: normal;
+}
+p {
+    line-height: var(--lh2);
+}
+
+
+
 
 * {
   box-sizing: border-box;
@@ -38,7 +140,5 @@ img {
 }
 
 .section-label {
-  margin: 0;
-  font-size: clamp(14px, 1.042vw, 20px);
-  line-height: 1.5;
+  font-size: var(--fs-body1);
 }
