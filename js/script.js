@@ -1,30 +1,58 @@
 (() => {
   const section = document.querySelector('.hero-scroll');
+  if (!section) return;
   const stage = section.querySelector('.hero');
+  const foreground = stage.querySelector('.hero__foreground');
+  const message = stage.querySelector('.hero__message');
+  const labels = stage.querySelectorAll('.hero__title, .hero__sound, .hero__scroll-hint');
   const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
   const clamp = (value) => Math.min(1, Math.max(0, value));
   const smooth = (value) => { const t = clamp(value); return t * t * (3 - 2 * t); };
   let scheduled = false;
+  let needsMeasure = true;
+  let sectionTop = 0;
+  let stageHeight = 0;
+  let travel = 1;
+
+  // Only update the element that consumes a value; avoid invalidating the whole hero subtree.
+  function setProperty(element, name, value) {
+    const next = String(value);
+    if (element.style.getPropertyValue(name) !== next) element.style.setProperty(name, next);
+  }
 
   function render() {
     scheduled = false;
-    const travel = section.offsetHeight - stage.offsetHeight;
-    const progress = clamp(-section.getBoundingClientRect().top / Math.max(1, travel));
+    if (needsMeasure) {
+      stageHeight = stage.offsetHeight;
+      sectionTop = section.getBoundingClientRect().top + window.scrollY;
+      travel = Math.max(1, section.offsetHeight - stageHeight);
+      needsMeasure = false;
+    }
+    const progress = clamp((window.scrollY - sectionTop) / travel);
     const movement = smooth((progress - .03) / .78);
     const reveal = smooth((progress - .12) / .32);
     const isReduced = reducedMotion.matches;
-    stage.style.setProperty('--subject-y', `${isReduced ? 0 : movement * stage.offsetHeight * .8}px`);
-    stage.style.setProperty('--subject-opacity', isReduced ? (progress > .1 ? 0 : 1) : 1 - smooth((progress - .65) / .22));
-    stage.style.setProperty('--message-opacity', isReduced ? (progress > .1 ? 1 : 0) : reveal);
-    stage.style.setProperty('--label-opacity', 1 - smooth(progress / .28));
+    // Dynamic scroll values use the existing CSS hooks; layout stays in CSS.
+    setProperty(foreground, '--subject-y', `${isReduced ? 0 : movement * stageHeight * .8}px`);
+    setProperty(foreground, '--subject-opacity', isReduced ? (progress > .1 ? 0 : 1) : 1 - smooth((progress - .65) / .22));
+    setProperty(message, '--message-opacity', isReduced ? (progress > .1 ? 1 : 0) : reveal);
+    const labelOpacity = 1 - smooth(progress / .28);
+    labels.forEach(label => setProperty(label, '--label-opacity', labelOpacity));
   }
 
   function schedule() {
     if (!scheduled) { scheduled = true; requestAnimationFrame(render); }
   }
+  function invalidateSize() {
+    needsMeasure = true;
+    schedule();
+  }
   addEventListener('scroll', schedule, { passive: true });
-  addEventListener('resize', schedule);
-  addEventListener('pageshow', schedule);
+  addEventListener('resize', invalidateSize);
+  addEventListener('pageshow', invalidateSize);
+  const resizeObserver = new ResizeObserver(invalidateSize);
+  resizeObserver.observe(section);
+  resizeObserver.observe(stage);
   reducedMotion.addEventListener('change', schedule);
   render();
 })();
@@ -33,24 +61,65 @@
 (() => {
   const nav = document.querySelector('.hero-nav');
   if (!nav) return;
-  const reveal = document.createElement('button');
-  reveal.type = 'button';
-  reveal.className = 'nav-reveal';
-  reveal.setAttribute('aria-label', '상단 메뉴 나타내기');
-  nav.id = 'main-navigation';
-  reveal.setAttribute('aria-controls', nav.id);
-  nav.after(reveal);
+  const reveal = document.querySelector('.nav-reveal');
+  const teamprojectActions = [...document.querySelectorAll('.teamproject__actions')];
+  const links = [...nav.querySelectorAll('a[href^="#"]')];
+  const sections = [...document.querySelectorAll('main > section, main > footer')];
+  const items = sections.map(section => ({
+    section,
+    link: links.find(link => {
+      const target = document.getElementById(link.hash.slice(1));
+      return link.hash === '#top' ? section.classList.contains('hero-scroll')
+        : target && (target === section || section.contains(target));
+    }),
+    top: 0
+  }));
+  let currentLink = null;
+  let activationOffset = 0;
+  let headerOffset = 0;
+  let pageHeight = 0;
+
+  function updateCurrent(y) {
+    // Follow the section near the top; allow the short footer at the page end.
+    const atBottom = y > 0 && y + window.innerHeight >= pageHeight - 1;
+    const current = atBottom ? items[items.length - 1]
+      : items.findLast(item => item.top <= y + activationOffset);
+    const backgroundSection = items.findLast(item => item.top <= y + headerOffset);
+    nav.classList.toggle('is-light', backgroundSection?.section.id === 'shoppingmall');
+    const link = current?.link || null;
+    if (link === currentLink) return;
+    currentLink?.removeAttribute('aria-current');
+    link?.setAttribute('aria-current', 'location');
+    currentLink = link;
+  }
+
   let hidden = false;
   let anchor = Math.max(0, scrollY);
+  function updateActionOffset() {
+    teamprojectActions.forEach(actions => {
+      if (hidden) {
+        actions.style.removeProperty('--teamproject-actions-top');
+        return;
+      }
+      actions.style.setProperty('--teamproject-actions-top', `calc(${nav.offsetTop + nav.offsetHeight}px + var(--space-normal))`);
+    });
+  }
   function setHidden(value) {
     hidden = value;
     nav.classList.toggle('is-hidden', value);
     nav.inert = value;
     reveal.hidden = !value;
     reveal.setAttribute('aria-expanded', String(!value));
+    updateActionOffset();
   }
   function measure() {
     const box = nav.getBoundingClientRect();
+    items.forEach(item => { item.top = item.section.getBoundingClientRect().top + window.scrollY; });
+    headerOffset = nav.offsetTop + nav.offsetHeight / 2;
+    activationOffset = Math.max(nav.offsetTop + nav.offsetHeight, window.innerHeight * .25);
+    pageHeight = document.documentElement.scrollHeight;
+    updateCurrent(Math.max(0, window.scrollY));
+    updateActionOffset();
     reveal.style.left = box.left + 'px';
     reveal.style.width = box.width + 'px';
     reveal.style.height = (nav.offsetTop + nav.offsetHeight + 10) + 'px';
@@ -58,6 +127,7 @@
   function scroll() {
     const y = Math.max(0, window.scrollY);
     nav.classList.toggle('is-scrolled', y > 100);
+    updateCurrent(y);
     if (y <= 30) { setHidden(false); anchor = y; return; }
     const delta = y - anchor;
     if (Math.abs(delta) < 8) return;
@@ -72,8 +142,12 @@
     if (link) link.blur();
   });
   addEventListener('scroll', scroll, { passive: true });
-  new ResizeObserver(measure).observe(nav);
+  const observer = new ResizeObserver(measure);
+  observer.observe(nav);
+  sections.forEach(section => observer.observe(section));
   addEventListener('resize', measure);
+  addEventListener('pageshow', measure);
+  addEventListener('load', measure);
   setHidden(false);
   measure();
   scroll();
@@ -85,22 +159,25 @@
   const audio = document.querySelector('#hero-jazz');
   const status = document.querySelector('.music-status');
   if (!button || !audio) return;
+  const icon = button.querySelector('image');
+  const errorMessage = status.querySelector('span');
   let requested = false;
   function update() {
-    const playing = !audio.paused;
+    const playing = !audio.paused && !audio.ended;
+    icon.setAttribute('href', playing ? icon.dataset.playSrc : icon.dataset.pauseSrc);
     button.setAttribute('aria-pressed', String(playing));
-    button.setAttribute('aria-label', playing ? '재즈 음악 일시정지' : '재즈 음악 재생');
-    button.title = playing ? '음악 일시정지' : '재즈 음악 재생';
+    button.setAttribute('aria-label', playing ? button.dataset.pauseLabel : button.dataset.playLabel);
+    button.title = playing ? button.dataset.pauseTitle : button.dataset.playTitle;
   }
   button.addEventListener('click', async () => {
     requested = !requested;
-    status.textContent = '';
+    errorMessage.hidden = true;
     if (!requested) { audio.pause(); return; }
     try { await audio.play(); }
     catch (error) {
       if (error.name === 'AbortError') return;
       requested = false;
-      status.textContent = '음악을 재생할 수 없습니다. audio/jazz.mp3 파일을 확인해 주세요.';
+      errorMessage.hidden = false;
       update();
     }
   });
@@ -137,24 +214,11 @@ document.addEventListener('dragstart', event => {
 // Manual galleries: popup reads left-to-right, poster reads right-to-left.
 document.querySelectorAll('.works--popup, .works--poster').forEach(section => {
   const reverse = section.classList.contains('works--poster');
-  const label = reverse ? '포스터' : '팝업';
   const gallery = section.querySelector('.works__gallery');
   const slides = [...gallery.children];
   const reduced = matchMedia('(prefers-reduced-motion: reduce)');
-  const controls = document.createElement('div');
-  controls.className = 'popup-controls';
-  const previous = document.createElement('button');
-  const next = document.createElement('button');
-  [previous, next].forEach((button, i) => {
-    button.type = 'button';
-    button.className = 'popup-arrow';
-    button.setAttribute('aria-label', (i ? '오른쪽 ' : '왼쪽 ') + label + ' 보기');
-    button.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="' +
-      (i ? 'm9 5 7 7-7 7' : 'm15 5-7 7 7 7') + '"/></svg>';
-    controls.append(button);
-  });
-  gallery.after(controls);
-  gallery.classList.add('popup-gallery');
+  const previous = section.querySelector('[data-direction="previous"]');
+  const next = section.querySelector('[data-direction="next"]');
   const limit = () => Math.max(0, gallery.scrollWidth - gallery.clientWidth);
   const currentPosition = () => reverse ? -gallery.scrollLeft : gallery.scrollLeft;
   const slidePosition = slide => Math.max(0, Math.min(limit(),
@@ -189,7 +253,7 @@ document.querySelectorAll('.works--popup, .works--poster').forEach(section => {
   gallery.addEventListener('click', event => {
     if (performance.now() < suppressClickUntil) { event.preventDefault(); return; }
     if (event.target.closest('button, a')) return;
-    // Pointer capture can retarget a click to the gallery, so hit-test images.
+    // Pointer capture can retarget a click to the gallery, so hit-test cards.
     const slide = slides.find(image => {
       const box = image.getBoundingClientRect();
       return event.clientX >= box.left && event.clientX <= box.right &&
@@ -241,8 +305,8 @@ document.querySelectorAll('.works--popup, .works--poster').forEach(section => {
   let activeCard = null;
   let restoreFocus = true;
   let previousOverflow = '';
-  triggers.forEach(trigger => trigger.addEventListener('click', () => {
-    if (closing || dialog.open) return;
+  triggers.forEach(trigger => trigger.addEventListener('click', event => {
+    if (!event.target.closest('.popup-card__more') || closing || dialog.open) return;
     const detail = details.find(item => item.dataset.popupDetail === trigger.dataset.project);
     if (!detail) return;
     activeTrigger = trigger.querySelector('.popup-card__more');
@@ -281,8 +345,8 @@ document.querySelectorAll('.works--popup, .works--poster').forEach(section => {
   const dialog = document.querySelector('#poster-detail');
   const details = [...dialog.querySelectorAll('[data-poster-detail]')];
   let activeCard, activeTrigger, closing = false, restoreFocus = true, previousOverflow = '';
-  document.querySelectorAll('.poster-card').forEach(trigger => trigger.addEventListener('click', () => {
-    if (dialog.open || closing) return;
+  document.querySelectorAll('.poster-card').forEach(trigger => trigger.addEventListener('click', event => {
+    if (!event.target.closest('.poster-card__more') || dialog.open || closing) return;
     const detail = details.find(item => item.dataset.posterDetail === trigger.dataset.poster);
     if (!detail) return;
     activeCard = trigger; activeTrigger = trigger.querySelector('.poster-card__more'); restoreFocus = true;
@@ -303,30 +367,19 @@ document.querySelectorAll('.works--popup, .works--poster').forEach(section => {
 
 // Banner carousel with centered, single-image snapping.
 document.querySelectorAll('.works--banner').forEach(section => {
-  const label = section.classList.contains('works--popup') ? '팝업' : '배너';
-  const looping = !section.classList.contains('works--popup');
+  const looping = true;
   const viewport = section.querySelector('.works__gallery');
   const slides = [...viewport.querySelectorAll('img')];
   const reduced = matchMedia('(prefers-reduced-motion: reduce)');
   const duration = 5000;
   const detailDialog = document.querySelector('#banner-detail');
-  const bannerProjects = [
-    { title: 'Burger King Plant-Based Whopper 프로모션 배너 디자인', image: 'img/banner-burgerking.jpg', tool: 'Figma', summary: ['Burger King의 기존 브랜드 이미지를 바탕으로, 식물성 패티를 사용한 Plant-Based Whopper를 소개하는 프로모션 배너를 제작했습니다.', '제품의 신선한 이미지를 직관적으로 전달하기 위해 그린 컬러를 메인으로 사용하고, 햄버거를 화면 중심에 크게 배치해 제품 자체가 가장 먼저 눈에 들어오도록 디자인했습니다.'], process: ['Burger King의 광고와 프로모션 배너를 살펴보며 브랜드에서 사용하는 컬러와 굵은 타이포그래피를 참고했습니다. 기존 브랜드의 친근하고 캐주얼한 분위기를 유지하면서도 식물성 제품이라는 특징이 자연스럽게 드러나는 방향으로 작업했습니다.', '전체 배경에는 짙은 그린 컬러를 사용하고 중앙에는 햄버거 이미지를 크게 배치했습니다. 토마토와 양상추 등 재료의 색상이 배경과 대비되도록 하여 제품의 신선함이 잘 드러나도록 구성했습니다.', '상단의 Plant-Based Whopper 문구는 크고 굵은 서체를 사용하고, 제품 옆에는 0% BEEF를 원형 그래픽으로 강조했습니다. 제품명과 핵심 특징만 남겨 짧은 시간에도 내용을 파악할 수 있는 배너를 목표로 했습니다.'] },
-    { title: 'UNIQLO 감사제 프로모션 배너 디자인', image: 'img/banner-uniqlo.jpg', tool: 'Figma', summary: ['UNIQLO의 겨울 시즌 감사제를 주제로, 시즌 분위기와 행사 정보를 함께 전달할 수 있는 프로모션 배너를 제작했습니다.', '겨울이라는 계절감을 명확하게 보여주면서도 UNIQLO의 브랜드 컬러인 레드가 자연스럽게 강조될 수 있도록 블루와 화이트를 중심으로 화면을 구성했습니다.'], process: ['UNIQLO의 시즌 프로모션과 감사제 광고를 참고하여 브랜드 특유의 단순하고 명확한 정보 전달 방식을 배너에 적용했습니다.', '배경은 눈이 쌓인 겨울 풍경과 매장을 중심으로 구성했습니다. 블루 하늘과 화이트 건물로 겨울의 차가운 분위기를 표현하고, 매장 왼쪽의 레드 오브젝트와 상단의 UNIQLO 로고가 자연스럽게 포인트가 되도록 했습니다.', '행사명인 감사제는 중앙에 크게, 상단에는 행사 성격을 설명하는 문구, 하단에는 기간을 배치했습니다. 넓은 공간과 강한 색상 대비로 브랜드와 프로모션 내용이 명확하게 전달되도록 구성했습니다.'] },
-    { title: 'AIR MAX 스포츠 프로모션 배너 디자인', image: 'img/banner-nike.jpg', tool: 'Photoshop', summary: ['스포츠 브랜드의 신발 프로모션을 주제로 AIR MAX 제품과 할인 정보를 함께 보여주는 배너를 제작했습니다.', '제품 이미지와 프로모션 문구가 각각 명확하게 보이도록 화면을 좌우로 나누고, 오렌지와 베이지의 강한 색상 대비를 활용해 활동적이고 캐주얼한 분위기를 표현했습니다.'], process: ['스포츠 브랜드의 온라인 프로모션 배너를 참고하여 제품과 할인 정보가 짧은 시간 안에 전달될 수 있도록 디자인했습니다.', '화면 왼쪽에는 AIR MAX, UP TO 50% SALE과 같은 주요 정보를 큰 타이포그래피로, 오른쪽에는 운동화 이미지를 크게 배치했습니다. 텍스트와 제품 영역을 나눠 자연스럽게 시선이 이동하도록 구성했습니다.', '베이지와 오렌지 컬러의 큰 원형 그래픽과 낮은 대비의 AIR MAX 영문 그래픽으로 화면에 리듬감을 더했습니다. SHOP NOW 버튼으로 제품명에서 할인 정보, 구매 버튼으로 이어지는 순서를 만들었습니다.'] },
-    { title: 'Baskin-Robbins Mint Brownie 신제품 배너 디자인', image: 'img/banner-baskinrobbins.jpg', tool: 'Figma', summary: ['Baskin-Robbins의 시즌 신제품을 가정하여 Mint Brownie라는 아이스크림을 중심으로 한 프로모션 배너를 제작했습니다.', '민트와 브라우니라는 두 가지 맛을 색상과 재료 이미지로 직접 보여주어, 별도의 긴 설명 없이도 제품의 특징을 쉽게 이해할 수 있도록 디자인했습니다.'], process: ['Baskin-Robbins의 신제품 프로모션에서 볼 수 있는 밝고 경쾌한 분위기를 참고하면서, 민트와 브라우니가 가장 잘 드러나는 방향으로 화면을 구성했습니다.', '중앙에는 민트 아이스크림과 브라우니가 섞인 제품을 크게 배치하고 주변에는 브라우니 조각과 민트 잎을 흩어지듯 배치했습니다. 실제 재료를 함께 노출해 맛을 시각적으로 전달하고 화면에 움직임을 더했습니다.', '배경에는 채도가 낮은 연한 민트 컬러를 적용하고, Mint에는 그린, Brownie에는 브라운 컬러를 사용했습니다. 제품 이미지와 제품명을 중앙에 집중시키고 충분한 여백으로 밝고 가벼운 분위기를 표현했습니다.'] }
-  ];
+  const bannerDetails = [...detailDialog.querySelectorAll('[data-banner-detail]')];
   let index = 0, elapsed = 0, previous = 0, frame = 0;
   let visible = false, paused = reduced.matches, wrapping = false;
   let gesture = null;
   let suppressClickUntil = 0;
-  const track = document.createElement('div');
+  const track = section.querySelector('.banner-track');
   const loopOffset = looping ? slides.length : 0;
-  track.className = 'banner-track';
-  slides.forEach((slide, index) => {
-    slide.dataset.bannerIndex = index;
-    track.append(slide);
-  });
   const cloneSlide = slide => {
     const clone = slide.cloneNode(true);
     clone.alt = '';
@@ -338,30 +391,12 @@ document.querySelectorAll('.works--banner').forEach(section => {
     track.prepend(...slides.map(cloneSlide));
     track.append(...slides.map(cloneSlide));
   }
-  viewport.append(track);
-  viewport.classList.add('banner-viewport');
-  viewport.setAttribute('aria-label', label + ' 슬라이더');
-  const controls = document.createElement('div');
-  controls.className = 'banner-controls';
-  const dots = document.createElement('div');
-  dots.className = 'banner-dots';
-  dots.setAttribute('role', 'group');
-  dots.setAttribute('aria-label', label + ' 선택');
-  const buttons = slides.map((slide, i) => {
-    const button = document.createElement('button');
-    button.type = 'button';
-    button.className = 'banner-dot';
-    button.setAttribute('aria-label', `${i + 1}번 ${label}: ${slide.alt}`);
-    button.innerHTML = '<span class="banner-dot__rail"><span></span></span>';
+  const buttons = [...section.querySelectorAll('.banner-dot')];
+  buttons.forEach((button, i) => {
     button.addEventListener('click', () => { select(i); sync(); });
-    dots.append(button);
-    return button;
   });
-  const toggle = document.createElement('button');
-  toggle.type = 'button';
-  toggle.className = 'banner-toggle';
-  controls.append(dots, toggle);
-  viewport.after(controls);
+  const toggle = section.querySelector('.banner-toggle');
+  const toggleIcon = toggle.querySelector('img');
   const atEnd = () => !looping && index === slides.length - 1;
   const nextIndex = step => looping
     ? (index + step + slides.length) % slides.length
@@ -372,10 +407,9 @@ document.querySelectorAll('.works--banner').forEach(section => {
       button.style.setProperty('--progress', i === index ? elapsed / duration : 0);
     });
     toggle.disabled = atEnd();
-    toggle.setAttribute('aria-label', atEnd() ? '마지막 팝업입니다. 이전 팝업을 선택하면 다시 재생할 수 있습니다.' : label + (paused ? ' 자동 재생' : ' 자동 재생 일시정지'));
-    toggle.innerHTML = paused || atEnd()
-      ? '<img src="img/icon-play.svg" alt="" aria-hidden="true">'
-      : '<img src="img/icon-pause.svg" alt="" aria-hidden="true">';
+    const stopped = paused || atEnd();
+    toggle.setAttribute('aria-label', stopped ? toggle.dataset.playLabel : toggle.dataset.pauseLabel);
+    toggleIcon.src = stopped ? toggleIcon.dataset.playSrc : toggleIcon.dataset.pauseSrc;
   }
   function show(physicalIndex, animate = true) {
     const slide = track.children[physicalIndex];
@@ -405,18 +439,11 @@ document.querySelectorAll('.works--banner').forEach(section => {
     return Number.isInteger(next) ? { next, slide, physicalIndex } : null;
   }
   let bannerClosing = false, bannerOverflow = '';
-  const bannerTitle = detailDialog.querySelector('h2');
-  const bannerImage = detailDialog.querySelector('.project-detail__visual img');
-  const bannerContent = detailDialog.querySelector('.project-detail__content');
-  const bannerSpecs = detailDialog.querySelector('.project-detail__specs');
   function openBannerDetail(target) {
-    const project = bannerProjects[target.next];
-    if (!project || detailDialog.open) return;
-    bannerTitle.textContent = project.title; bannerImage.src = project.image; bannerImage.alt = `${project.title} 전체 디자인`;
-    const summaryHeading = document.createElement('h3'); summaryHeading.textContent = '간략한 텍스트';
-    const processHeading = document.createElement('h3'); processHeading.textContent = '제작 과정';
-    bannerContent.replaceChildren(summaryHeading, ...project.summary.map(text => { const p = document.createElement('p'); p.className = 'project-detail__summary'; p.textContent = text; return p; }), processHeading, ...project.process.map(text => { const p = document.createElement('p'); p.textContent = text; return p; }));
-    bannerSpecs.replaceChildren(...['제작 규격', '크기 : 1920 × 970px', '비율 : 2 : 1', `툴 : ${project.tool}`].map((text, i) => { const el = document.createElement(i ? 'dd' : 'dt'); el.textContent = text; return el; }));
+    const detail = bannerDetails.find(item => item.dataset.bannerDetail === target.slide.dataset.bannerIndex);
+    if (!detail || detailDialog.open) return;
+    bannerDetails.forEach(item => { item.hidden = item !== detail; });
+    detailDialog.setAttribute('aria-labelledby', detail.querySelector('h2').id);
     bannerOverflow = document.body.style.overflow; document.body.style.overflow = 'hidden'; detailDialog.showModal(); detailDialog.scrollTop = 0; sync();
   }
   function handleBannerTap(target) {
@@ -551,12 +578,7 @@ document.querySelectorAll('.works--banner').forEach(section => {
 // Detail-page cards open their long-form design images in a scrollable dialog.
 (() => {
   const dialog = document.querySelector('#detail-page-detail');
-  const image = dialog.querySelector('.project-detail__visual img');
-  const pages = {
-    headset: { image: 'img/detail-headset.jpg', alt: '헤드셋 상세 페이지 디자인', height: 10000 },
-    lotion: { image: 'img/detail-lotion.jpg', alt: '로션 상세 페이지 디자인', height: 10000 },
-    candy: { image: 'img/detail-candy-thumb.jpg', alt: '캔디 상세 페이지 디자인', height: 1800 }
-  };
+  const pages = [...dialog.querySelectorAll('[data-detail-image]')];
   let activeCard;
   let previousOverflow = '';
   function close() {
@@ -564,12 +586,10 @@ document.querySelectorAll('.works--banner').forEach(section => {
     dialog.close();
   }
   document.querySelectorAll('.detail-card').forEach(card => card.addEventListener('click', () => {
-    const page = pages[card.dataset.detailPage];
+    const page = pages.find(item => item.dataset.detailImage === card.dataset.detailPage);
     if (!page || dialog.open) return;
     activeCard = card;
-    image.src = page.image;
-    image.alt = page.alt;
-    image.height = page.height;
+    pages.forEach(item => { item.hidden = item !== page; });
     previousOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
     dialog.showModal();

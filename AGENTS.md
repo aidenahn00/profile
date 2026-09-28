@@ -74,6 +74,12 @@ margin, padding, gap 등 레이아웃 간격은 `--space-*` 형태의 기존 CSS
 
 새로운 디자인 토큰이 반드시 필요한 경우 추가 이유를 설명한다.
 
+### Breakpoint 단위
+
+새로운 media query의 breakpoint 값은 반드시 `px` 단위를 사용한다.
+
+`rem`, `em` 단위의 breakpoint는 사용하지 않는다.
+
 ---
 
 ## 4. CSS 금지 사항
