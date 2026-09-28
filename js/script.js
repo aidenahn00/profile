@@ -5,6 +5,8 @@
   const foreground = stage.querySelector('.hero__foreground');
   const message = stage.querySelector('.hero__message');
   const labels = stage.querySelectorAll('.hero__title, .hero__sound, .hero__scroll-hint');
+  const about = document.querySelector('.about');
+  const aboutVisual = about?.querySelector('.about__visual');
   const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
   const clamp = (value) => Math.min(1, Math.max(0, value));
   const smooth = (value) => { const t = clamp(value); return t * t * (3 - 2 * t); };
@@ -13,6 +15,8 @@
   let sectionTop = 0;
   let stageHeight = 0;
   let travel = 1;
+  let aboutTop = 0;
+  let aboutTravel = 1;
 
   // Only update the element that consumes a value; avoid invalidating the whole hero subtree.
   function setProperty(element, name, value) {
@@ -26,6 +30,10 @@
       stageHeight = stage.offsetHeight;
       sectionTop = section.getBoundingClientRect().top + window.scrollY;
       travel = Math.max(1, section.offsetHeight - stageHeight);
+      if (about) {
+        aboutTop = about.getBoundingClientRect().top + window.scrollY;
+        aboutTravel = Math.max(1, about.offsetHeight - stageHeight);
+      }
       needsMeasure = false;
     }
     const progress = clamp((window.scrollY - sectionTop) / travel);
@@ -38,6 +46,11 @@
     setProperty(message, '--message-opacity', isReduced ? (progress > .1 ? 1 : 0) : reveal);
     const labelOpacity = 1 - smooth(progress / .28);
     labels.forEach(label => setProperty(label, '--label-opacity', labelOpacity));
+    if (aboutVisual) {
+      const aboutProgress = clamp((window.scrollY - aboutTop) / aboutTravel);
+      const videoProgress = smooth((aboutProgress - .12) / .58);
+      setProperty(aboutVisual, '--about-video-y', `${(1 - (isReduced ? 1 : videoProgress)) * 100}%`);
+    }
   }
 
   function schedule() {
@@ -53,6 +66,7 @@
   const resizeObserver = new ResizeObserver(invalidateSize);
   resizeObserver.observe(section);
   resizeObserver.observe(stage);
+  if (about) resizeObserver.observe(about);
   reducedMotion.addEventListener('change', schedule);
   render();
 })();
@@ -62,6 +76,8 @@
   const nav = document.querySelector('.hero-nav');
   if (!nav) return;
   const reveal = document.querySelector('.nav-reveal');
+  const toggle = document.querySelector('.nav-toggle');
+  const mobileNavigation = matchMedia('(max-width: 1024px)');
   const teamprojectActions = [...document.querySelectorAll('.teamproject__actions')];
   const links = [...nav.querySelectorAll('a[href^="#"]')];
   const sections = [...document.querySelectorAll('main > section, main > footer')];
@@ -97,7 +113,7 @@
   let anchor = Math.max(0, scrollY);
   function updateActionOffset() {
     teamprojectActions.forEach(actions => {
-      if (hidden) {
+      if (hidden || mobileNavigation.matches) {
         actions.style.removeProperty('--teamproject-actions-top');
         return;
       }
@@ -106,6 +122,13 @@
   }
   function setHidden(value) {
     hidden = value;
+    if (mobileNavigation.matches) {
+      nav.classList.remove('is-hidden');
+      nav.inert = !nav.classList.contains('is-menu-open');
+      reveal.hidden = true;
+      updateActionOffset();
+      return;
+    }
     nav.classList.toggle('is-hidden', value);
     nav.inert = value;
     reveal.hidden = !value;
@@ -128,6 +151,7 @@
     const y = Math.max(0, window.scrollY);
     nav.classList.toggle('is-scrolled', y > 100);
     updateCurrent(y);
+    if (mobileNavigation.matches) { setHidden(false); anchor = y; return; }
     if (y <= 30) { setHidden(false); anchor = y; return; }
     const delta = y - anchor;
     if (Math.abs(delta) < 8) return;
@@ -135,11 +159,45 @@
     else if (!nav.contains(document.activeElement)) setHidden(true);
     anchor = y;
   }
+  function setMobileMenu(open) {
+    nav.classList.toggle('is-menu-open', open);
+    nav.inert = !open;
+    toggle.setAttribute('aria-expanded', String(open));
+    toggle.setAttribute('aria-label', open ? '주요 메뉴 닫기' : '주요 메뉴 열기');
+  }
+  function syncNavigationMode() {
+    if (mobileNavigation.matches) {
+      hidden = false;
+      nav.classList.remove('is-hidden');
+      setMobileMenu(false);
+      reveal.hidden = true;
+    } else {
+      nav.classList.remove('is-menu-open');
+      nav.inert = false;
+      toggle.setAttribute('aria-expanded', 'false');
+      toggle.setAttribute('aria-label', '주요 메뉴 열기');
+      setHidden(false);
+    }
+    measure();
+  }
   reveal.addEventListener('click', () => { setHidden(false); anchor = window.scrollY; });
   reveal.addEventListener('focus', () => { setHidden(false); nav.querySelector('a')?.focus(); });
+  toggle.addEventListener('click', () => {
+    if (!mobileNavigation.matches) return;
+    const open = !nav.classList.contains('is-menu-open');
+    setMobileMenu(open);
+    if (open) nav.querySelector('a')?.focus();
+  });
   nav.addEventListener('click', event => {
     const link = event.target.closest('a');
-    if (link) link.blur();
+    if (!link) return;
+    if (mobileNavigation.matches) setMobileMenu(false);
+    else link.blur();
+  });
+  addEventListener('keydown', event => {
+    if (event.key !== 'Escape' || !mobileNavigation.matches || !nav.classList.contains('is-menu-open')) return;
+    setMobileMenu(false);
+    toggle.focus();
   });
   addEventListener('scroll', scroll, { passive: true });
   const observer = new ResizeObserver(measure);
@@ -148,8 +206,8 @@
   addEventListener('resize', measure);
   addEventListener('pageshow', measure);
   addEventListener('load', measure);
-  setHidden(false);
-  measure();
+  mobileNavigation.addEventListener('change', syncNavigationMode);
+  syncNavigationMode();
   scroll();
 })();
 
@@ -211,30 +269,27 @@ document.addEventListener('dragstart', event => {
   if (event.target instanceof HTMLImageElement) event.preventDefault();
 });
 
-// Manual galleries: popup reads left-to-right, poster reads right-to-left.
+// POPUP and POSTER galleries share the same left-to-right controls and card activation.
 document.querySelectorAll('.works--popup, .works--poster').forEach(section => {
-  const reverse = section.classList.contains('works--poster');
   const gallery = section.querySelector('.works__gallery');
   const slides = [...gallery.children];
   const reduced = matchMedia('(prefers-reduced-motion: reduce)');
   const previous = section.querySelector('[data-direction="previous"]');
   const next = section.querySelector('[data-direction="next"]');
   const limit = () => Math.max(0, gallery.scrollWidth - gallery.clientWidth);
-  const currentPosition = () => reverse ? -gallery.scrollLeft : gallery.scrollLeft;
-  const slidePosition = slide => Math.max(0, Math.min(limit(),
-    reverse ? slides[0].offsetLeft - slide.offsetLeft : slide.offsetLeft - slides[0].offsetLeft));
+  const currentPosition = () => gallery.scrollLeft;
+  const slidePosition = slide => Math.max(0, Math.min(limit(), slide.offsetLeft - slides[0].offsetLeft));
   function stops() {
     return [...new Set([0, ...slides.map(slidePosition), limit()])];
   }
   function update() {
-    previous.disabled = reverse ? currentPosition() >= limit() - 2 : currentPosition() <= 2;
-    next.disabled = reverse ? currentPosition() <= 2 : currentPosition() >= limit() - 2;
+    previous.disabled = currentPosition() <= 2;
+    next.disabled = currentPosition() >= limit() - 2;
   }
   function moveTo(left) {
-    gallery.scrollTo({ left: reverse ? -left : left, behavior: reduced.matches ? 'instant' : 'smooth' });
+    gallery.scrollTo({ left, behavior: reduced.matches ? 'instant' : 'smooth' });
   }
   function step(direction) {
-    if (reverse) direction *= -1;
     const points = stops();
     const current = currentPosition();
     moveTo(direction > 0 ? (points.find(p => p > current + 2) ?? limit())
@@ -252,22 +307,15 @@ document.querySelectorAll('.works--popup, .works--poster').forEach(section => {
   let suppressClickUntil = 0;
   gallery.addEventListener('click', event => {
     if (performance.now() < suppressClickUntil) { event.preventDefault(); return; }
-    if (event.target.closest('button, a')) return;
-    // Pointer capture can retarget a click to the gallery, so hit-test cards.
-    const slide = slides.find(image => {
-      const box = image.getBoundingClientRect();
+    const slide = event.target.closest('.popup-card, .poster-card') ?? slides.find(card => {
+      const box = card.getBoundingClientRect();
       return event.clientX >= box.left && event.clientX <= box.right &&
         event.clientY >= box.top && event.clientY <= box.bottom;
     });
-    if (!slide) return;
-    const box = slide.getBoundingClientRect();
-    const bounds = gallery.getBoundingClientRect();
-    if (box.left >= bounds.left - 2 && box.right <= bounds.right + 2) return;
-    moveTo(slidePosition(slide));
+    if (!slide || !gallery.contains(slide)) return;
+    slide.dispatchEvent(new Event('gallerycardactivate'));
   });
   gallery.addEventListener('pointerdown', event => {
-    // Touch uses native horizontal scrolling and snapping.
-    if (event.target.closest('button, a')) return;
     if (event.pointerType !== 'mouse' || event.button !== 0) return;
     drag = { id: event.pointerId, x: event.clientX, left: gallery.scrollLeft, moved: false };
     gallery.setPointerCapture(event.pointerId);
@@ -280,13 +328,11 @@ document.querySelectorAll('.works--popup, .works--poster').forEach(section => {
   });
   function release(event) {
     if (!drag || event.pointerId !== drag.id) return;
-    const current = currentPosition();
     const moved = drag.moved;
     if (moved) suppressClickUntil = performance.now() + 400;
     drag = null;
     gallery.classList.remove('is-dragging');
     if (gallery.hasPointerCapture(event.pointerId)) gallery.releasePointerCapture(event.pointerId);
-    if (moved) moveTo(stops().reduce((best, p) => Math.abs(p - current) < Math.abs(best - current) ? p : best, 0));
   }
   gallery.addEventListener('pointerup', release);
   gallery.addEventListener('pointercancel', release);
@@ -305,8 +351,8 @@ document.querySelectorAll('.works--popup, .works--poster').forEach(section => {
   let activeCard = null;
   let restoreFocus = true;
   let previousOverflow = '';
-  triggers.forEach(trigger => trigger.addEventListener('click', event => {
-    if (!event.target.closest('.popup-card__more') || closing || dialog.open) return;
+  triggers.forEach(trigger => trigger.addEventListener('gallerycardactivate', () => {
+    if (closing || dialog.open) return;
     const detail = details.find(item => item.dataset.popupDetail === trigger.dataset.project);
     if (!detail) return;
     activeTrigger = trigger.querySelector('.popup-card__more');
@@ -345,8 +391,8 @@ document.querySelectorAll('.works--popup, .works--poster').forEach(section => {
   const dialog = document.querySelector('#poster-detail');
   const details = [...dialog.querySelectorAll('[data-poster-detail]')];
   let activeCard, activeTrigger, closing = false, restoreFocus = true, previousOverflow = '';
-  document.querySelectorAll('.poster-card').forEach(trigger => trigger.addEventListener('click', event => {
-    if (!event.target.closest('.poster-card__more') || dialog.open || closing) return;
+  document.querySelectorAll('.poster-card').forEach(trigger => trigger.addEventListener('gallerycardactivate', () => {
+    if (dialog.open || closing) return;
     const detail = details.find(item => item.dataset.posterDetail === trigger.dataset.poster);
     if (!detail) return;
     activeCard = trigger; activeTrigger = trigger.querySelector('.poster-card__more'); restoreFocus = true;
