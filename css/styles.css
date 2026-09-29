@@ -527,7 +527,7 @@ img.skill-icon {
   scroll-snap-type: none;
   scrollbar-width: none;
   cursor: grab;
-  touch-action: pan-y pinch-zoom;
+  touch-action: auto;
   user-select: none;
 }
 
