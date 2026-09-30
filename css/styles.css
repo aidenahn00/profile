@@ -1395,11 +1395,13 @@ img.skill-icon {
   transition: opacity 240ms ease;
 }
 
-.popup-card:hover .popup-card__overlay,
-.popup-card:focus-within .popup-card__overlay,
-.poster-card:hover .poster-card__overlay,
-.poster-card:focus-within .poster-card__overlay {
-  opacity: 1;
+@media (hover: hover) and (pointer: fine) {
+  .popup-card:hover .popup-card__overlay,
+  .popup-card:focus-within .popup-card__overlay,
+  .poster-card:hover .poster-card__overlay,
+  .poster-card:focus-within .poster-card__overlay {
+    opacity: 1;
+  }
 }
 
 .popup-card__overlay h3,
@@ -1680,7 +1682,6 @@ img.skill-icon {
 @media (hover: none) {
   .popup-card__overlay,
   .poster-card__overlay {
-    opacity: 0;
     pointer-events: none;
   }
 
