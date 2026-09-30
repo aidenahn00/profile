@@ -341,6 +341,15 @@ document.querySelectorAll('.works--popup, .works--poster').forEach(section => {
   update();
 });
 
+// Keep dialog content and scroll locking in place until the exit motion finishes.
+async function closeProjectDetail(dialog) {
+  if (!dialog.open || dialog.classList.contains('is-closing')) return;
+  dialog.classList.add('is-closing');
+  await Promise.allSettled(dialog.getAnimations().map(animation => animation.finished));
+  dialog.close();
+  dialog.classList.remove('is-closing');
+}
+
 // One shared modal presents the details for every POPUP card.
 (() => {
   const dialog = document.querySelector('#popup-detail');
@@ -363,12 +372,13 @@ document.querySelectorAll('.works--popup, .works--poster').forEach(section => {
     document.body.style.overflow = 'hidden';
     dialog.showModal();
     dialog.scrollTop = 0;
+    detail.querySelector('.project-detail__copy').scrollTop = 0;
   }));
-  function closeDetail({ focusTrigger = true } = {}) {
+  async function closeDetail({ focusTrigger = true } = {}) {
     if (closing || !dialog.open) return;
     closing = true;
     restoreFocus = focusTrigger;
-    dialog.close();
+    await closeProjectDetail(dialog);
     closing = false;
   }
   dialog.querySelector('.project-detail__close').addEventListener('click', () => closeDetail({ focusTrigger: false }));
@@ -399,11 +409,12 @@ document.querySelectorAll('.works--popup, .works--poster').forEach(section => {
     details.forEach(item => { item.hidden = item !== detail; });
     previousOverflow = document.body.style.overflow; document.body.style.overflow = 'hidden';
     dialog.showModal(); dialog.scrollTop = 0;
+    detail.querySelector('.project-detail__copy').scrollTop = 0;
   }));
-  function close({ focusTrigger = true } = {}) {
+  async function close({ focusTrigger = true } = {}) {
     if (closing || !dialog.open) return;
     closing = true; restoreFocus = focusTrigger;
-    dialog.close(); closing = false;
+    await closeProjectDetail(dialog); closing = false;
   }
   dialog.querySelector('.project-detail__close').addEventListener('click', () => close({ focusTrigger: false }));
   dialog.addEventListener('cancel', event => { event.preventDefault(); close(); });
@@ -502,10 +513,10 @@ document.querySelectorAll('.works--banner').forEach(section => {
     }
     return true;
   }
-  function closeBannerDetail() {
+  async function closeBannerDetail() {
     if (bannerClosing || !detailDialog.open) return;
     bannerClosing = true;
-    detailDialog.close(); bannerClosing = false;
+    await closeProjectDetail(detailDialog); bannerClosing = false;
   }
   detailDialog.querySelector('.project-detail__close').addEventListener('click', closeBannerDetail);
   detailDialog.addEventListener('cancel', event => { event.preventDefault(); closeBannerDetail(); });
@@ -629,7 +640,7 @@ document.querySelectorAll('.works--banner').forEach(section => {
   let previousOverflow = '';
   function close() {
     if (!dialog.open) return;
-    dialog.close();
+    closeProjectDetail(dialog);
   }
   document.querySelectorAll('.detail-card').forEach(card => card.addEventListener('click', () => {
     const page = pages.find(item => item.dataset.detailImage === card.dataset.detailPage);

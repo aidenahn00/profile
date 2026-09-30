@@ -1456,12 +1456,40 @@ img.skill-icon {
   -ms-overflow-style: none;
 }
 
-.project-detail::-webkit-scrollbar {
+.project-detail::-webkit-scrollbar,
+.popup-detail .project-detail__copy::-webkit-scrollbar,
+.poster-detail .project-detail__copy::-webkit-scrollbar {
   display: none;
 }
 
 .project-detail::backdrop {
   background: color-mix(in srgb, var(--gray-900) 50%, transparent);
+}
+
+.project-detail[open] {
+  animation: project-detail-enter 280ms ease-out both;
+}
+
+.project-detail[open].is-closing {
+  animation: project-detail-exit 220ms ease-in both;
+}
+
+@keyframes project-detail-enter {
+  from {
+    opacity: 0;
+    transform: translateY(var(--space-x-large));
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes project-detail-exit {
+  to {
+    opacity: 0;
+    transform: translateY(var(--space-x-large));
+  }
 }
 
 .project-detail__surface {
@@ -1523,29 +1551,50 @@ img.skill-icon {
 .poster-detail__body {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-rows: minmax(0, 1fr);
   clear: both;
   aspect-ratio: 4 / 3;
 }
 
-.popup-detail__body[hidden] {
+.popup-detail__body[hidden],
+.poster-detail__body[hidden] {
   display: none;
 }
 
-.poster-detail__body[hidden] {
-  display: none;
+.popup-detail,
+.poster-detail {
+  max-width: calc((100dvh - var(--space-2x-large)) * 4 / 3);
 }
 
 .popup-detail .project-detail__visual img,
 .poster-detail .project-detail__visual img {
   width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .popup-detail .project-detail__copy,
 .poster-detail .project-detail__copy {
-  align-self: center;
+  display: grid;
+  grid-auto-rows: max-content;
+  align-content: safe center;
+  align-self: stretch;
+  width: 100%;
+  min-width: 0;
+  min-height: 0;
+  max-height: 100%;
   margin: 0;
-  padding: var(--space-2x-large);
+  padding: 4rem var(--space-2x-large);
   text-align: left;
+  overflow-y: auto;
+  scrollbar-width: none;
+  overscroll-behavior: contain;
+  /* The local cover hides the bottom shade when there is no more content to scroll. */
+  background:
+    linear-gradient(to bottom, transparent, var(--gray-0) var(--space-normal))
+      center bottom / 100% var(--space-2x-large) no-repeat local,
+    linear-gradient(to bottom, transparent, color-mix(in srgb, var(--gray-900) 10%, transparent))
+      center bottom / 100% var(--space-x-large) no-repeat scroll;
 }
 
 .project-detail__copy {
@@ -1581,9 +1630,11 @@ img.skill-icon {
   line-height: var(--lh2);
   word-break: keep-all;
 }
+.project-detail__copy p:last-of-type {
+  margin: 0 0 1.875rem;
+}
 
 .project-detail__specs {
-  margin: 1.875rem 0 0;
   font-size: var(--fs-body2);
   line-height: var(--lh2);
 }
@@ -1592,7 +1643,7 @@ img.skill-icon {
   margin: 0;
 }
 
-@media (max-width: 64rem) {
+@media (max-width: 1024px) {
   .teamproject__image {
     width: 100%;
   }
@@ -1600,17 +1651,26 @@ img.skill-icon {
   .popup-detail__body,
   .poster-detail__body {
     grid-template-columns: 1fr;
+    grid-template-rows: auto;
     aspect-ratio: auto;
+  }
+
+  .popup-detail,
+  .poster-detail {
+    max-width: none;
   }
 
   .popup-detail .project-detail__visual img,
   .poster-detail .project-detail__visual img {
     width: 45.455%;
+    height: auto;
   }
 
   .popup-detail .project-detail__copy,
   .poster-detail .project-detail__copy {
     align-self: auto;
+    max-height: none;
+    overflow-y: visible;
     margin: auto;
     padding: 3.5rem var(--space-x-large) 5.625rem;
     text-align: center;
@@ -1738,6 +1798,11 @@ img.skill-icon {
   .popup-card__overlay,
   .poster-card__overlay {
     transition: none;
+  }
+
+  .project-detail[open],
+  .project-detail[open].is-closing {
+    animation-duration: 0s;
   }
 
   .about {
